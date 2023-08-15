@@ -73,10 +73,12 @@
                     </div>
                     <a href="{{ route('invoices.add') }}" class="modal-effect btn btn-sm btn-primary" style="color:white"><i
                             class="fas fa-plus"></i>&nbsp; اضافة فاتورة</a>
+                    <a class="modal-effect btn btn-sm btn-primary" href="{{ route('export') }}"
+                        style="color:white"><i class="fas fa-file-download"></i>&nbsp;تصدير اكسيل</a>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table id="example" class="table key-buttons text-md-nowrap">
+                        <table id="example1" class="table key-buttons text-md-nowrap">
                             <thead>
                                 <tr>
                                     <th class="border-bottom-0">#</th>

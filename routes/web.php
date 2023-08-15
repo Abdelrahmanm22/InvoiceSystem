@@ -46,6 +46,7 @@ Route::post('/postchangepayment', [InvoiceController::class,'postChangePayment']
 Route::post('/postupdateInvoices',[InvoiceController::class,'update'])->name('invoices.postupdate');
 Route::post('/deleteInvoice',[InvoiceController::class,'destroy'])->name('invoices.delete');
 Route::post('/archiveInvoice',[InvoiceController::class,'archive'])->name('invoices.archive');
+Route::get('/export', [InvoiceController::class, 'export'])->name('export');
 ////Routes for invoices/////////////////
 
 

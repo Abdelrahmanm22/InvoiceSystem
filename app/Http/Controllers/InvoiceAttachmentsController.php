@@ -11,6 +11,11 @@ use Illuminate\Support\Facades\Storage;
 class InvoiceAttachmentsController extends Controller
 {
     use attachment;
+
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     /**
      * Display a listing of the resource.
      *

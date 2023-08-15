@@ -8,6 +8,10 @@ use Illuminate\Http\Request;
 class InvoiceArchiveController extends Controller
 {
     //
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     public function index()
     {
         $invoices = Invoice::onlyTrashed()->get();

@@ -8,6 +8,11 @@ use Illuminate\Support\Facades\Auth;
 
 class SectionController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+    
     /**
      * Display a listing of the resource.
      *
@@ -22,7 +27,7 @@ class SectionController extends Controller
 
     public function getSectionProducts($id){
         $section = Section::find($id);
-        return $section->products->pluck("Product_name", "id");;
+        return $section->products->pluck("Product_name", "id");
     }
 
     /**

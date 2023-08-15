@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\InvoicesExport;
 use App\Models\Invoice;
 use App\Models\InvoiceAttachments;
 use App\Models\InvoiceDetails;
@@ -14,9 +15,16 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Notification;
+use App\Exports\UsersExport;
+use Maatwebsite\Excel\Facades\Excel;
 class InvoiceController extends Controller
 {
     use attachment;
+
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -325,6 +333,11 @@ class InvoiceController extends Controller
     public function printInvoice($id){
         $invoice = Invoice::findOrFail($id);
         return view('invoices.printInvoice',compact('invoice'));
+    }
+
+    public function export() 
+    {
+        return Excel::download(new InvoicesExport, 'Invoices.xlsx');
     }
 
     
