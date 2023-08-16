@@ -6,8 +6,9 @@ use App\Http\Controllers\InvoiceAttachmentsController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\InvoiceDetailsController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SectionController;
-
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -87,6 +88,14 @@ Route::post('/productsStore', [ProductController::class,'store'])->name('product
 Route::post('/productsUpdate', [ProductController::class,'update'])->name('products.update');
 Route::post('/productsDestroy', [ProductController::class,'destroy'])->name('products.destroy');
 ////Routes for products/////////////////
+
+////Routes for Spatie Permission////////////////
+Route::group(['middleware' => ['auth']], function() {
+    Route::resource('roles', RoleController::class);
+    Route::resource('users', UserController::class);
+});
+////Routes for Spatie Permission////////////////
+
 
 Route::get('/{page}',[AdminController::class,'index']);
 
