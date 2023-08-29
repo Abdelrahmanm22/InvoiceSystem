@@ -50,7 +50,7 @@
             </button>
         </div>
     @endif
-	<!-- if updated successfully -->
+    <!-- if updated successfully -->
     @if (session()->has('edit'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">
             <strong>{{ session()->get('edit') }}</strong>
@@ -78,10 +78,12 @@
                         <h4 class="card-title mg-b-0">جدول المنتجات</h4>
                         <i class="mdi mdi-dots-horizontal text-gray"></i>
                     </div>
-                    <div class="col-sm-6 col-md-4 col-xl-3 mg-t-20">
-                        <a class="modal-effect btn btn-outline-primary btn-block" data-effect="effect-flip-horizontal"
-                            data-toggle="modal" href="#modaldemo8">اضافة منتج </a>
-                    </div>
+                    @can('اضافة منتج')
+                        <div class="col-sm-6 col-md-4 col-xl-3 mg-t-20">
+                            <a class="modal-effect btn btn-outline-primary btn-block" data-effect="effect-flip-horizontal"
+                                data-toggle="modal" href="#modaldemo8">اضافة منتج </a>
+                        </div>
+                    @endcan
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
@@ -106,17 +108,21 @@
                                         <td>{{ $p->user }}</td>
                                         <td>
 
-                                            <a class="modal-effect btn btn-sm btn-info" data-effect="effect-scale"
-                                                data-id="{{ $p->id }}" data-name="{{ $p->Product_name }}"
-                                                data-description="{{ $p->description }}"data-section_name="{{ $p->section->section_name}}"
-                                                data-toggle="modal" href="#exampleModal2" title="تعديل"><i
-                                                    class="las la-pen"></i>
-                                            </a>
-                                            <a class="modal-effect btn btn-sm btn-danger" data-effect="effect-scale"
-                                                data-id="{{ $p->id }}" data-name="{{ $p->Product_name }}"
-                                                data-toggle="modal" href="#modaldemo9" title="حذف"><i
-                                                    class="las la-trash"></i>
-                                            </a>
+                                            @can('تعديل منتج')
+                                                <a class="modal-effect btn btn-sm btn-info" data-effect="effect-scale"
+                                                    data-id="{{ $p->id }}" data-name="{{ $p->Product_name }}"
+                                                    data-description="{{ $p->description }}"data-section_name="{{ $p->section->section_name }}"
+                                                    data-toggle="modal" href="#exampleModal2" title="تعديل"><i
+                                                        class="las la-pen"></i>
+                                                </a>
+                                            @endcan
+                                            @can('حذف منتج')
+                                                <a class="modal-effect btn btn-sm btn-danger" data-effect="effect-scale"
+                                                    data-id="{{ $p->id }}" data-name="{{ $p->Product_name }}"
+                                                    data-toggle="modal" href="#modaldemo9" title="حذف"><i
+                                                        class="las la-trash"></i>
+                                                </a>
+                                            @endcan
                                         </td>
                                     </tr>
                                 @endforeach
@@ -199,9 +205,9 @@
                         </div>
                         <label class="my-1 mr-2" for="inlineFormCustomSelectPref">القسم</label>
                         <select name="section_id" id="section_id" class="custom-select my-1 mr-sm-2" required>
-						<option value="" selected disabled></option>
+                            <option value="" selected disabled></option>
                             @foreach ($sections as $section)
-                                <option value="{{$section->id}}">{{ $section->section_name }}</option>
+                                <option value="{{ $section->id }}">{{ $section->section_name }}</option>
                             @endforeach
                         </select>
                 </div>
@@ -214,7 +220,7 @@
         </div>
     </div>
 
-	<!-- delete -->
+    <!-- delete -->
     <div class="modal" id="modaldemo9">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content modal-content-demo">
@@ -270,16 +276,16 @@
             var button = $(event.relatedTarget)
             var id = button.data('id')
             var Product_name = button.data('name')
-			var section_name = button.data('section_name')
+            var section_name = button.data('section_name')
             var description = button.data('description')
             var modal = $(this)
             modal.find('.modal-body #id').val(id);
             modal.find('.modal-body #Product_name').val(Product_name);
             modal.find('.modal-body #description').val(description);
-			modal.find('.modal-body #section_id').val(section_name);
+            modal.find('.modal-body #section_id').val(section_name);
         })
     </script>
-	<script>
+    <script>
         $('#modaldemo9').on('show.bs.modal', function(event) {
             var button = $(event.relatedTarget)
             var id = button.data('id')

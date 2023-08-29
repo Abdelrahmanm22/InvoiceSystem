@@ -64,11 +64,11 @@
                         <tbody>
                             @foreach ($data as $key => $user)
                                 <tr>
-                                    <td>{{ $loop->iteration}}</td>
+                                    <td>{{ $loop->iteration }}</td>
                                     <td>{{ $user->name }}</td>
                                     <td>{{ $user->email }}</td>
                                     <td>
-                                        @if ($user->Status == "مفعل")
+                                        @if ($user->Status == 'مفعل')
                                             <span class="label text-success d-flex">
                                                 <div class="dot-label bg-success ml-1"></div>{{ $user->Status }}
                                             </span>
@@ -88,10 +88,11 @@
                                     </td>
 
                                     <td>
-                                        
-                                        <a href="{{ route('users.edit', $user->id) }}" class="btn btn-sm btn-info"
-                                            title="تعديل"><i class="las la-pen"></i></a>
-                                        
+                                        @can('تعديل مستخدم')
+                                            <a href="{{ route('users.edit', $user->id) }}" class="btn btn-sm btn-info"
+                                                title="تعديل"><i class="las la-pen"></i></a>
+                                        @endcan
+
 
                                         @can('حذف مستخدم')
                                             <a class="modal-effect btn btn-sm btn-danger" data-effect="effect-scale"
@@ -171,7 +172,6 @@
         modal.find('.modal-body #user_id').val(user_id);
         modal.find('.modal-body #username').val(username);
     })
-
 </script>
 
 
