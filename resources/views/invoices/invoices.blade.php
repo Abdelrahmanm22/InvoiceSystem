@@ -71,7 +71,7 @@
                         <h4 class="card-title mg-b-0">جدول الفواتير</h4>
                         <i class="mdi mdi-dots-horizontal text-gray"></i>
                     </div>
-                    @can('اضافة فاتوره')
+                    @can('اضافة فاتورة')
                         <a href="{{ route('invoices.add') }}" class="modal-effect btn btn-sm btn-primary" style="color:white"><i
                                 class="fas fa-plus"></i>&nbsp; اضافة فاتورة</a>
                     @endcan

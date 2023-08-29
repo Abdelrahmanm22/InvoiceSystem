@@ -1,10 +1,12 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\CustomersReportController;
 use App\Http\Controllers\InvoiceArchiveController;
 use App\Http\Controllers\InvoiceAttachmentsController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\InvoiceDetailsController;
+use App\Http\Controllers\InvoicesReportController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SectionController;
@@ -95,6 +97,16 @@ Route::group(['middleware' => ['auth']], function() {
     Route::resource('users', UserController::class);
 });
 ////Routes for Spatie Permission////////////////
+
+
+
+////Routes for Reports ////////////////
+Route::get('/invoicesReport', [InvoicesReportController::class,'index'])->name('invoicesReport');
+Route::post('/Search_invoices', [InvoicesReportController::class,'Search_invoices'])->name('Search_invoices');
+
+Route::get('/customersReport', [CustomersReportController::class,'index'])->name('customersReport');
+Route::post('/Search_customers', [CustomersReportController::class,'Search_customers'])->name('Search_customers');
+////Routes for Reports ////////////////
 
 
 Route::get('/{page}',[AdminController::class,'index']);
