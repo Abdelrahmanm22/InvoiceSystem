@@ -50,6 +50,8 @@ Route::post('/postupdateInvoices',[InvoiceController::class,'update'])->name('in
 Route::post('/deleteInvoice',[InvoiceController::class,'destroy'])->name('invoices.delete');
 Route::post('/archiveInvoice',[InvoiceController::class,'archive'])->name('invoices.archive');
 Route::get('/export', [InvoiceController::class, 'export'])->name('export');
+Route::get('/MarkAsRead_all',[InvoiceController::class, 'MarkAsRead_all'])->name('MarkAsRead_all');
+Route::get('/MarkAsRead/{id}/{notification}',[InvoiceController::class, 'MarkAsRead'])->name('MarkAsRead');
 ////Routes for invoices/////////////////
 
 

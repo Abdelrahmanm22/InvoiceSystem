@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Notification;
 use App\Exports\UsersExport;
+use App\Notifications\InvoiceNotification;
 use Maatwebsite\Excel\Facades\Excel;
 class InvoiceController extends Controller
 {
@@ -151,9 +152,16 @@ class InvoiceController extends Controller
         }
 
         //mail notification
-        $user = Auth::user();
-        Notification::send($user, new addInvoice($invoice_id));
+        // $user = Auth::user();
+        // Notification::send($user, new addInvoice($invoice_id));
         // $user->notify(new addInvoice($invoice_id));
+
+
+
+        //normal notification
+        $invoice = Invoice::latest()->first();
+        $users = User::all()->except(Auth::id()); ///send to all users
+        Notification::send($users, new InvoiceNotification($invoice));
 
 
         session()->flash('Add', 'تم اضافة فاتوره بنجاح ');
@@ -340,6 +348,30 @@ class InvoiceController extends Controller
         return Excel::download(new InvoicesExport, 'Invoices.xlsx');
     }
 
-    
+    public function MarkAsRead_all(){
+        $userUnreadNotification= auth()->user()->unreadNotifications;
+
+        if($userUnreadNotification) {
+            $userUnreadNotification->markAsRead();
+            return back();
+        }
+    }
+
+    public function MarkAsRead($id,$nty){
+        $userUnreadNotification= auth()->user()->unreadNotifications;
+        if($userUnreadNotification) {
+
+            foreach ($userUnreadNotification as $notification) {
+                if ($notification->id == $nty) {
+                    $notification->markAsRead();
+                    return redirect()->route('InvoicesDetails', ['id' => $id]);
+                }
+            }
+            
+            
+        }
+        return back();
+
+    }
 
 }
