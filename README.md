@@ -12,3 +12,12 @@
 * I used default authentication in laravel. It offers several benefits for me when building My System like Time Efficiency,Security Best Practices,Customizable,User Management,Session Handling,Middleware Integration and Integration with Eloquent.
 * In dealing with the database, I decided to manage it with Migrations, They offer several benefits that contribute to efficient and organized database management during the development and deployment process like Version Control,Collaboration,Reproducibility,Rollbacks,Database Structure Evolution and Automated Deployment.
 ### Schema for database
+![Schema Image](https://github.com/Abdelrahmanm22/InvoiceSystem/blob/main/database.png)
+
+* In some Tables..I used Eloquent, that makes it enjoyable to interact with your database. When using Eloquent, each database table has a corresponding "Model" that is used to interact with that table. In addition to retrieving records from the database table, Eloquent models allow you to insert, update, and delete records from the table as well.
+* I used Ajax in Dynamic Dependent Dropdown to select section and it's product in invoice form,this feature offers several benefits that enhance the user experience and streamline data selection in my system.
+* When the invoice is entered, the system calculates the final output in order to prevent user mathematical errors.
+* In Archieve Invoices,I used soft delete which hides information from end-user or flags data as deleted while it still remains visible or active in your database,that allows you to "delete" records from a database while retaining them in the database with a special marker indicating that they are considered "soft deleted." This is often used to maintain data integrity and the ability to recover deleted records if needed.
+* I used Mail Notifications when user add invoice,mail notifications provide a convenient way to send email notifications to users or any recipients. Notifications are a part of Laravel's notification system, which abstracts the process of sending various types of notifications.
+* In my system,I wanted to control all users and give each user own permisions,so i used Spatie Permission package,This package allows you to manage user permissions and roles in a database,that provides a flexible and robust way to handle role-based and permission-based authorization in Laravel applications.
+* To provide data analysis,I used fxcosta that is simple package to facilitate and automate the use of charts.
