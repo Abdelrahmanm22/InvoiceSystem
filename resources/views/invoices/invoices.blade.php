@@ -157,7 +157,7 @@
                                                             الارشيف</a>
                                                     @endcan
 
-                                                    @can('طباعة الفاتورة')
+                                                    @can('طباعةالفاتورة')
                                                         <a class="dropdown-item" href="printInvoice/{{ $i->id }}"><i
                                                                 class="text-success fas fa-print"></i>&nbsp;&nbsp;طباعة
                                                             الفاتورة

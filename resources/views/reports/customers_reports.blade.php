@@ -15,7 +15,7 @@
     <link href="{{ URL::asset('assets/plugins/select2/css/select2.min.css') }}" rel="stylesheet">
 
 @section('title')
-    تقرير العملاء - مورا سوفت للادارة الفواتير
+    تقرير العملاء   
 @stop
 @endsection
 @section('page-header')

@@ -152,8 +152,8 @@ class InvoiceController extends Controller
         }
 
         //mail notification
-        // $user = Auth::user();
-        // Notification::send($user, new addInvoice($invoice_id));
+        $user = Auth::user();
+        Notification::send($user, new addInvoice($invoice_id));
         // $user->notify(new addInvoice($invoice_id));
 
 
