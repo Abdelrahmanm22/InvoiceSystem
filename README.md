@@ -21,3 +21,7 @@
 * I used Mail Notifications when user add invoice,mail notifications provide a convenient way to send email notifications to users or any recipients. Notifications are a part of Laravel's notification system, which abstracts the process of sending various types of notifications.
 * In my system,I wanted to control all users and give each user own permisions,so i used Spatie Permission package,This package allows you to manage user permissions and roles in a database,that provides a flexible and robust way to handle role-based and permission-based authorization in Laravel applications.
 * To provide data analysis,I used fxcosta that is simple package to facilitate and automate the use of charts.
+
+# Watch this video for more details and see all features
+
+https://github.com/Abdelrahmanm22/InvoiceSystem/blob/main/invoices.mp4
