@@ -97,6 +97,7 @@ Route::post('/productsDestroy', [ProductController::class,'destroy'])->name('pro
 Route::group(['middleware' => ['auth']], function() {
     Route::resource('roles', RoleController::class);
     Route::resource('users', UserController::class);
+    
 });
 ////Routes for Spatie Permission////////////////
 
