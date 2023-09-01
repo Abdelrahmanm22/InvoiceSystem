@@ -24,4 +24,4 @@
 
 # Watch this video for more details and see all features
 
-https://drive.google.com/drive/u/0/folders/1mMhyd2SKDrc31fattSpJdONIvmyx5vKK
+https://drive.google.com/file/d/1KUXKD5DlCmmumZqlSqooeKphhDDRGJ-p/view?t=1s
