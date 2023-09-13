@@ -100,7 +100,7 @@ Route::group(['middleware' => ['auth']], function() {
     
 });
 ////Routes for Spatie Permission////////////////
-
+Route::get('/editProfile', [UserController::class,'profile'])->name('editProfile');
 
 
 ////Routes for Reports ////////////////
