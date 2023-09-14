@@ -71,8 +71,8 @@ Route::get('/InvoicesDetails/{id}', [InvoiceDetailsController::class,'index'])->
 ////Routes for invoicesAttachment/////////////////
 Route::get('/showAttach/{invoice_number}/{file_name}', [InvoiceAttachmentsController::class,'index'])->name('showAttach');
 Route::get('/download/{invoice_number}/{file_name}', [InvoiceAttachmentsController::class,'download'])->name('showAttach');
-Route::post('/deleteAttach}', [InvoiceAttachmentsController::class,'destroy'])->name('deleteAttach');
-Route::post('/addAttach}', [InvoiceAttachmentsController::class,'store'])->name('addAttach');
+Route::post('/deleteAttach', [InvoiceAttachmentsController::class,'destroy'])->name('deleteAttach');
+Route::post('/addAttach', [InvoiceAttachmentsController::class,'store'])->name('addAttach');
 ////Routes for invoicesAttachment/////////////////
 
 

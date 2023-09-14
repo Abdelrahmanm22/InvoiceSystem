@@ -11,6 +11,10 @@ class SectionController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
+        $this->middleware('permission:الاقسام', ['only' => ['index']]);
+        $this->middleware('permission:اضافة قسم', ['only' => ['store']]);
+        $this->middleware('permission:تعديل قسم', ['only' => ['update']]);
+        $this->middleware('permission:حذف قسم', ['only' => ['destroy']]);
     }
     
     /**

@@ -13,6 +13,10 @@ class ProductController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
+        $this->middleware('permission:المنتجات', ['only' => ['index']]);
+        $this->middleware('permission:اضافة منتج', ['only' => ['store']]);
+        $this->middleware('permission:تعديل منتج', ['only' => ['update']]);
+        $this->middleware('permission:حذف منتج', ['only' => ['destroy']]);
     }
     
     /**

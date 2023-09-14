@@ -25,7 +25,7 @@ class HomeController extends Controller
     public function index()
     {
         $count_all = Invoice::count();
-        $States =  ['1','2','3'];
+        $States =  ['2','1','3'];
         $percentage =[];
         for($i=0;$i<3;$i++){
             $x = Invoice::where('Value_Status', $States[$i])->count();

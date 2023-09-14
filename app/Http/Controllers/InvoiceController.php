@@ -25,7 +25,21 @@ class InvoiceController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
+        $this->middleware('permission:قائمة الفواتير', ['only' => ['index']]);
+        $this->middleware('permission:الفواتير المدفوعة', ['only' => ['Invoice_Paid']]);
+
+        $this->middleware('permission:الفواتير المدفوعة جزئيا',['only'=>['Invoice_Partial']]);
+        $this->middleware('permission:الفواتير الغير مدفوعة', ['only' => ['Invoice_unPaid']]);
+        $this->middleware('permission:اضافة فاتورة', ['only' => ['create', 'store']]);
+        $this->middleware('permission:حذف الفاتورة', ['only' => ['destroy']]);
+        $this->middleware('permission:تعديل الفاتورة', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:تصدير EXCEL', ['only' => ['export']]);
+        $this->middleware('permission:تغير حالة الدفع', ['only' => ['changepayment','postchangepayment']]);
+        $this->middleware('permission:ارشفة الفاتورة', ['only' => ['archive']]);
+        $this->middleware('permission:طباعة الفاتورة', ['only' => ['printInvoice']]);
+        $this->middleware('permission:طباعة الفاتورة', ['only' => ['printInvoice']]);
     }
+    
     /**
      * Display a listing of the resource.
      *
@@ -133,9 +147,8 @@ class InvoiceController extends Controller
             'note' => $request->note,
             'user' => (Auth::user()->name),
         ]);
-
-
-
+        
+        
         ///save to InvoiceAttachments if picture exists//////////////
         if ($request->hasFile('pic')) {
             $invoice_number = $request->invoice_number;
@@ -152,8 +165,8 @@ class InvoiceController extends Controller
         }
 
         //mail notification
-        $user = Auth::user();
-        Notification::send($user, new addInvoice($invoice_id));
+        // $user = Auth::user();
+        // Notification::send($user, new addInvoice($invoice_id));
         // $user->notify(new addInvoice($invoice_id));
 
 

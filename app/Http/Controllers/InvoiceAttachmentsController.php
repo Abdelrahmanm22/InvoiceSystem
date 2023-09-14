@@ -15,6 +15,8 @@ class InvoiceAttachmentsController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
+        $this->middleware('permission:اضافة مرفق', ['only' => ['store']]);
+        $this->middleware('permission:حذف المرفق', ['only' => ['destroy']]);
     }
     /**
      * Display a listing of the resource.

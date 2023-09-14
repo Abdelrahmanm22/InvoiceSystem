@@ -8,6 +8,10 @@ use Illuminate\Http\Request;
 class InvoicesReportController extends Controller
 {
     //
+    public function __construct(){
+        $this->middleware('auth');
+        $this->middleware('permission:تقرير الفواتير', ['only' => ['index']]);
+    }
 
     public function index()
     {
