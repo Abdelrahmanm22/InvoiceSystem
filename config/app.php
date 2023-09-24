@@ -165,6 +165,7 @@ return [
         Illuminate\View\ViewServiceProvider::class,
         Maatwebsite\Excel\ExcelServiceProvider::class,
         Fx3costa\LaravelChartJs\Providers\ChartjsServiceProvider::class,
+        // SimpleSoftwareIO\QrCode\QrCodeServiceProvider::class,
 
         /*
          * Package Service Providers...
@@ -195,6 +196,7 @@ return [
     'aliases' => Facade::defaultAliases()->merge([
         // ...
         'Excel' =>Maatwebsite\Excel\Facades\Excel::class,
+        // 'QrCode' => SimpleSoftwareIO\QrCode\Facades\QrCode::class,
     ])->toArray(),
 
 ];

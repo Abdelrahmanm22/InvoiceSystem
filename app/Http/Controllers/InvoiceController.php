@@ -30,14 +30,14 @@ class InvoiceController extends Controller
 
         $this->middleware('permission:الفواتير المدفوعة جزئيا',['only'=>['Invoice_Partial']]);
         $this->middleware('permission:الفواتير الغير مدفوعة', ['only' => ['Invoice_unPaid']]);
-        $this->middleware('permission:اضافة فاتورة', ['only' => ['create', 'store']]);
+        $this->middleware('permission:الكاشير', ['only' => ['create', 'store']]);
         $this->middleware('permission:حذف الفاتورة', ['only' => ['destroy']]);
         $this->middleware('permission:تعديل الفاتورة', ['only' => ['edit', 'update']]);
         $this->middleware('permission:تصدير EXCEL', ['only' => ['export']]);
         $this->middleware('permission:تغير حالة الدفع', ['only' => ['changepayment','postchangepayment']]);
         $this->middleware('permission:ارشفة الفاتورة', ['only' => ['archive']]);
-        $this->middleware('permission:طباعة الفاتورة', ['only' => ['printInvoice']]);
-        $this->middleware('permission:طباعة الفاتورة', ['only' => ['printInvoice']]);
+        // $this->middleware('permission:طباعة الفاتورة', ['only' => ['printInvoice']]);
+        $this->middleware('permission:طباعةالفاتورة', ['only' => ['printInvoice']]);
     }
     
     /**
@@ -48,6 +48,7 @@ class InvoiceController extends Controller
     public function index()
     {
         $invoices = Invoice::get();
+        // return $invoices->order;
         return view('invoices.invoices', compact('invoices'));
     }
 
@@ -286,6 +287,7 @@ class InvoiceController extends Controller
             Storage::disk('public_uploads')->deleteDirectory($Details->invoice_number);
         }
         $invoice->forceDelete();
+        $invoice->order->delete();
         session()->flash('delete_invoice');
         return redirect('/invoices');
     }
@@ -318,8 +320,8 @@ class InvoiceController extends Controller
             InvoiceDetails::create([
                 'id_Invoice' => $request->invoice_id,
                 'invoice_number' => $request->invoice_number,
-                'product' => $request->product,
-                'Section' => $request->Section,
+                // 'product' => $request->product,
+                // 'Section' => $request->Section,
                 'Status' => $request->Status,
                 'Value_Status' => 1,
                 'note' => $request->note,
@@ -337,8 +339,8 @@ class InvoiceController extends Controller
             InvoiceDetails::create([
                 'id_Invoice' => $request->invoice_id,
                 'invoice_number' => $request->invoice_number,
-                'product' => $request->product,
-                'Section' => $request->Section,
+                // 'product' => $request->product,
+                // 'Section' => $request->Section,
                 'Status' => $request->Status,
                 'Value_Status' => 3,
                 'note' => $request->note,

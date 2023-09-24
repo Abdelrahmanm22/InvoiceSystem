@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 
 class ProductController extends Controller
 {
-    
+
     public function __construct()
     {
         $this->middleware('auth');
@@ -18,7 +18,7 @@ class ProductController extends Controller
         $this->middleware('permission:تعديل منتج', ['only' => ['update']]);
         $this->middleware('permission:حذف منتج', ['only' => ['destroy']]);
     }
-    
+
     /**
      * Display a listing of the resource.
      *
@@ -27,11 +27,11 @@ class ProductController extends Controller
     public function index()
     {
         //
-        $products = Product::with(['section'=>function($q){
-            $q->select('id','section_name');
+        $products = Product::with(['section' => function ($q) {
+            $q->select('id', 'section_name');
         }])->get();
         $sections = Section::get();
-        return view('products.products',compact('products','sections'));
+        return view('products.products', compact('products', 'sections'));
     }
 
     /**
@@ -56,20 +56,41 @@ class ProductController extends Controller
         // dd($request);
         $validatedData = $request->validate([
             'Product_name' => 'required|unique:products|max:255',
-            'section_id'=>'required',
+            'section_id' => 'required',
+            'price' => 'required|numeric|digits_between:1,10000',
+            'mini_price' => 'required|numeric|between:1,100000',
+            'Wholesale_Price' => 'required|numeric|between:0,100000',
+            'quantity' => 'required|numeric|between:0,100000',
         ], [
             'Product_name.required' => 'يرجي ادخال اسم المنتج',
             'Product_name.unique' => 'اسم المنتج مسجل مسبقا',
-            'section_id.required'=>'يرجي اختيار اسم القسم'
+            'section_id.required' => 'يرجي اختيار اسم القسم',
+            'price.required' => 'يرجي ادخال سعر المنتج',
+            'price.numeric' => 'يجب ان يكون سعر المنتج مكون من ارقام وليس حروف',
+            'price.between' => 'يجب ان يكون سعر المنتج يتراوح بين 1 الي 100000 جنيه',
+            'mini_price.required' => 'يرجي ادخال أقل سعر للمنتج',
+            'mini_price.numeric' => 'يجب ان يكون اقل سعر للمنتج مكون من ارقام فقط وليس حروف',
+            'mini_price.between' => 'يجب ان يكون أقل سعر للمنتج يتراوح بين 1 الي 100000 جنيه',
+
+            'Wholesale_Price.required' => 'يرجي ادخال سعر الجمله',
+            'Wholesale_Price.numeric' => 'يجب ان يكون سعر الحمله مكون من ارقام وليس حروف',
+            'Wholesale_Price.between' => 'يجب ان يكون سعر الجمله يتراوح بين 0 الي 100000 جنيه',
+
+            'quantity.required' => 'يرجي ادخال كمية المنتج ',
+            'quantity.numeric' => 'يجب ان يكون كمية المنتج  مكون من ارقام فقط وليس حروف',
+            'quantity.between' => 'يجب ان يكون كمية المنتج يتراوح بين 0 الي 100000 جنيه',
         ]);
 
         //push data in database
         Product::create([
             'Product_name' => $request->Product_name,
             'description' => $request->description,
+            'price' => $request->price,
+            'mini_price'=>$request->mini_price,
+            'Wholesale_Price'=>$request->Wholesale_Price,
+            'quantity'=>$request->quantity,
             'section_id' => $request->section_id,
             'user' => (Auth::user()->name),
-
         ]);
         session()->flash('Add', 'تم اضافة المنتج بنجاح ');
         return redirect('/products');
@@ -109,18 +130,41 @@ class ProductController extends Controller
         $id = $request->id;
 
         $this->validate($request, [
-            'Product_name' => 'required|max:255|unique:products,Product_name,'. $id, //عشان امنع التقرار في التعديل
-            'section_id'=>'required',
+            'Product_name' => 'required|max:255|unique:products,Product_name,' . $id, //عشان امنع التقرار في التعديل
+            'section_id' => 'required',
+            'price' => 'required|numeric|digits_between:1,10000',
+            'mini_price' => 'required|numeric|between:1,100000',
+            'Wholesale_Price' => 'required|numeric|between:0,100000',
+            'quantity' => 'required|numeric|between:0,100000',
         ], [
             'Product_name.required' => 'يرجي ادخال اسم المنتج',
             'Product_name.unique' => 'اسم المنتج مسجل مسبقا',
-            'section_id.required'=>'يرجي اختيار اسم القسم'
+            'section_id.required' => 'يرجي اختيار اسم القسم',
+            'section_id.required' => 'يرجي اختيار اسم القسم',
+            'price.required' => 'يرجي ادخال سعر المنتج',
+            'price.numeric' => 'يجب ان يكون سعر المنتج مكون من ارقام فقط وليس حروف',
+            'price.between' => 'يجب ان يكون سعر المنتج يتراوح بين 1 الي 100000 جنيه',
+            'mini_price.required' => 'يرجي ادخال أقل سعر للمنتج',
+            'mini_price.numeric' => 'يجب ان يكون اقل سعر للمنتج مكون من ارقام فقط وليس حروف',
+            'mini_price.between' => 'يجب ان يكون أقل سعر للمنتج يتراوح بين 1 الي 100000 جنيه',
+
+            'Wholesale_Price.required' => 'يرجي ادخال سعر الجمله',
+            'Wholesale_Price.numeric' => 'يجب ان يكون سعر الحمله مكون من ارقام فقط وليس حروف',
+            'Wholesale_Price.between' => 'يجب ان يكون سعر الجمله يتراوح بين 0 الي 100000 جنيه',
+
+            'quantity.required' => 'يرجي ادخال كمية المنتج ',
+            'quantity.numeric' => 'يجب ان يكون كمية المنتج  مكون من ارقام فقط وليس حروف',
+            'quantity.between' => 'يجب ان يكون كمية المنتج يتراوح بين 0 الي 100000 جنيه',
         ]);
 
         $products = Product::find($id);
         $products->update([
             'Product_name' => $request->Product_name,
             'description' => $request->description,
+            'price' => $request->price,
+            'mini_price'=>$request->mini_price,
+            'Wholesale_Price'=>$request->Wholesale_Price,
+            'quantity'=>$request->quantity,
             'section_id' => $request->section_id,
             'user' => (Auth::user()->name),
         ]);

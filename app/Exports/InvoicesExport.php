@@ -12,6 +12,6 @@ class InvoicesExport implements FromCollection
     */
     public function collection()
     {
-        return Invoice::select('invoice_number', 'invoice_Date', 'Due_date','product', 'Amount_collection','Amount_Commission', 'Rate_VAT', 'Value_VAT','Total', 'Status', 'Payment_Date','note')->get();
+        return Invoice::select('order_id', 'invoice_Date', 'Total', 'Status', 'Payment_Date','note')->get();
     }
 }

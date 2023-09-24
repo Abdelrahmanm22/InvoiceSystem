@@ -53,7 +53,7 @@ class InvoicesReportController extends Controller
         // في البحث برقم الفاتورة
         else {
 
-            $invoices = Invoice::select('*')->where('invoice_number', '=', $request->invoice_number)->get();
+            $invoices = Invoice::select('*')->where('order_id', '=', $request->invoice_number)->get();
             return view('reports.invoices_reports')->withDetails($invoices);
         }
     }

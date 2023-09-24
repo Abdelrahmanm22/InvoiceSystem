@@ -136,12 +136,12 @@
                                     <th class="border-bottom-0">#</th>
                                     <th class="border-bottom-0">رقم الفاتورة</th>
                                     <th class="border-bottom-0">تاريخ القاتورة</th>
-                                    <th class="border-bottom-0">تاريخ الاستحقاق</th>
-                                    <th class="border-bottom-0">المنتج</th>
-                                    <th class="border-bottom-0">القسم</th>
-                                    <th class="border-bottom-0">الخصم</th>
-                                    <th class="border-bottom-0">نسبة الضريبة</th>
-                                    <th class="border-bottom-0">قيمة الضريبة</th>
+                                    {{-- <th class="border-bottom-0">تاريخ الاستحقاق</th> --}}
+                                    {{-- <th class="border-bottom-0">المنتج</th> --}}
+                                    {{-- <th class="border-bottom-0">القسم</th> --}}
+                                    {{-- <th class="border-bottom-0">الخصم</th> --}}
+                                    {{-- <th class="border-bottom-0">نسبة الضريبة</th> --}}
+                                    {{-- <th class="border-bottom-0">قيمة الضريبة</th> --}}
                                     <th class="border-bottom-0">الاجمالي</th>
                                     <th class="border-bottom-0">الحالة</th>
                                     <th class="border-bottom-0">ملاحظات</th>
@@ -153,16 +153,17 @@
                                     <?php $i++; ?>
                                     <tr>
                                         <td>{{ $i }}</td>
-                                        <td>{{ $invoice->invoice_number }} </td>
-                                        <td>{{ $invoice->invoice_Date }}</td>
-                                        <td>{{ $invoice->Due_date }}</td>
-                                        <td>{{ $invoice->product }}</td>
-                                        <td><a
-                                                href="{{ url('InvoicesDetails') }}/{{ $invoice->id }}">{{ $invoice->section->section_name }}</a>
+                                        <td> <a href="{{ url('InvoicesDetails/' . $invoice->id) }}">{{ $invoice->order_id }}</a>
                                         </td>
-                                        <td>{{ $invoice->Discount }}</td>
-                                        <td>{{ $invoice->Rate_VAT }}</td>
-                                        <td>{{ $invoice->Value_VAT }}</td>
+                                        <td>{{ $invoice->invoice_Date }}</td>
+                                        {{-- <td>{{ $invoice->Due_date }}</td> --}}
+                                        {{-- <td>{{ $invoice->product }}</td> --}}
+                                        {{-- <td><a
+                                                href="{{ url('InvoicesDetails') }}/{{ $invoice->id }}">{{ $invoice->section->section_name }}</a>
+                                        </td> --}}
+                                        {{-- <td>{{ $invoice->Discount }}</td> --}}
+                                        {{-- <td>{{ $invoice->Rate_VAT }}</td> --}}
+                                        {{-- <td>{{ $invoice->Value_VAT }}</td> --}}
                                         <td>{{ $invoice->Total }}</td>
                                         <td>
                                             @if ($invoice->Value_Status == 1)
@@ -178,8 +179,14 @@
                                         <td>{{ $invoice->note }}</td>
                                     </tr>
                                 @endforeach
+                                
                             </tbody>
                         </table>
+                        <div class="d-flex justify-content-between">
+                            <p class="fw-bold">Total</p>
+                            <p class="fw-bold" style="color: #35558a;">
+                                EGP{{ $details->sum('Total') }}</p>
+                        </div>
 
                     @endif
                 </div>

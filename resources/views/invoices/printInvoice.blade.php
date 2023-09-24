@@ -6,7 +6,6 @@
                 display: none;
             }
         }
-
     </style>
 @endsection
 @section('title')
@@ -55,41 +54,72 @@
                             <div class="col-md">
                                 <label class="tx-gray-600">معلومات الفاتورة</label>
                                 <p class="invoice-info-row"><span>رقم الفاتورة</span>
-                                    <span>{{ $invoice->invoice_number }}</span></p>
+                                    <span>{{ $invoice->order_id }}</span>
+                                </p>
                                 <p class="invoice-info-row"><span>تاريخ الاصدار</span>
-                                    <span>{{ $invoice->invoice_Date }}</span></p>
-                                <p class="invoice-info-row"><span>تاريخ الاستحقاق</span>
-                                    <span>{{ $invoice->Due_date }}</span></p>
-                                <p class="invoice-info-row"><span>القسم</span>
-                                    <span>{{ $invoice->section->section_name }}</span></p>
+                                    <span>{{ $invoice->invoice_Date }}</span>
+                                </p>
+                                {{-- <p class="invoice-info-row"><span>تاريخ الاستحقاق</span> --}}
+                                {{-- <span>{{ $invoice->Due_date }}</span></p> --}}
+                                {{-- <p class="invoice-info-row"><span>القسم</span> --}}
+                                {{-- <span>{{ $invoice->section->section_name }}</span></p> --}}
                             </div>
                         </div>
                         <div class="table-responsive mg-t-40">
                             <table class="table table-invoice border text-md-nowrap mb-0">
                                 <thead>
                                     <tr>
-                                        <th class="wd-20p">#</th>
-                                        <th class="wd-40p">المنتج</th>
-                                        <th class="tx-center">مبلغ التحصيل</th>
-                                        <th class="tx-right">مبلغ العمولة</th>
-                                        <th class="tx-right">الاجمالي</th>
+                                        <th scope="col">#</th>
+                                        <th scope="col">اسم المنتج</th>
+                                        <th scope="col">قسم المنتج</th>
+                                        <th scope="col">الكميه</th>
+                                        <th scope="col">ثمن بيع القطعه الواحده</th>
+                                        <th scope="col">الاجمالي</th>
+                                        <th scope="col">تاريخ الاصدار</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>1</td>
-                                        <td class="tx-12">{{ $invoice->product }}</td>
-                                        <td class="tx-center">{{ number_format($invoice->Amount_collection, 2) }}</td>
-                                        <td class="tx-right">{{ number_format($invoice->Amount_Commission, 2) }}</td>
-                                        @php
-                                        $total = $invoice->Amount_collection + $invoice->Amount_Commission ;
-                                        @endphp
-                                        <td class="tx-right">
-                                            {{ number_format($total, 2) }}
-                                        </td>
-                                    </tr>
+                                    <?php $i = 0; ?>
+                                    @foreach ($invoice->order->order_details as $o)
+                                        <?php $i++; ?>
+                                        <tr>
+                                            <td>{{ $i }}</td>
+                                            <td>{{ $o->product->Product_name }}</td>
+                                            <td>{{ $o->section }}</td>
+                                            <td>{{ $o->mount }}</td>
+                                            <td>{{ $o->total / $o->mount }}</td>
+                                            <td>{{ $o->total }}</td>
+                                            <td>{{ $o->created_at }}</td>
+                                            {{-- <td colspan="2">
 
-                                    <tr>
+                                                                        <a class="btn btn-outline-success btn-sm"
+                                                                            href="{{ url('showAttach/' . $invoice->invoice_number . '/' . $attachment->file_name) }}"
+                                                                            role="button"><i
+                                                                                class="fas fa-eye"></i>&nbsp;
+                                                                            عرض</a>
+
+                                                                        <a class="btn btn-outline-info btn-sm"
+                                                                            href="{{ url('download/' . $invoice->invoice_number . '/' . $attachment->file_name) }}"
+                                                                            role="button"><i
+                                                                                class="fas fa-download"></i>&nbsp;
+                                                                            تحميل</a>
+
+
+                                                                        @can('حذف المرفق')
+                                                                            <button class="btn btn-outline-danger btn-sm"
+                                                                                data-toggle="modal"
+                                                                                data-file_name="{{ $attachment->file_name }}"
+                                                                                data-invoice_number="{{ $attachment->invoice_number }}"
+                                                                                data-id_file="{{ $attachment->id }}"
+                                                                                data-target="#delete_file">حذف</button>
+                                                                        @endcan
+
+
+                                                                    </td> --}}
+                                        </tr>
+                                    @endforeach
+
+                                    {{-- <tr>
                                         <td class="valign-middle" colspan="2" rowspan="4">
                                             <div class="invoice-notes">
                                                 <label class="main-content-label tx-13">#</label>
@@ -105,7 +135,8 @@
                                     </tr>
                                     <tr>
                                         <td class="tx-right">قيمة الخصم</td>
-                                        <td class="tx-right" colspan="2"> {{ number_format($invoice->Discount, 2) }}</td>
+                                        <td class="tx-right" colspan="2"> {{ number_format($invoice->Discount, 2) }}
+                                        </td>
 
                                     </tr>
                                     <tr>
@@ -113,7 +144,7 @@
                                         <td class="tx-right" colspan="2">
                                             <h4 class="tx-primary tx-bold">{{ number_format($invoice->Total, 2) }}</h4>
                                         </td>
-                                    </tr>
+                                    </tr> --}}
                                 </tbody>
                             </table>
                         </div>
@@ -148,7 +179,6 @@
             document.body.innerHTML = originalContents;
             location.reload();
         }
-
     </script>
 
 @endsection

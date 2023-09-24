@@ -19,7 +19,7 @@
         <div class="my-auto">
             <div class="d-flex">
                 <h4 class="content-title mb-0 my-auto">الفواتير</h4><span class="text-muted mt-1 tx-13 mr-2 mb-0">/
-                     الفواتير المدفوعه جزئيا</span>
+                    الفواتير المدفوعه جزئيا</span>
             </div>
         </div>
 
@@ -71,8 +71,10 @@
                         <h4 class="card-title mg-b-0">جدول الفواتير</h4>
                         <i class="mdi mdi-dots-horizontal text-gray"></i>
                     </div>
-                    <a href="{{ route('invoices.add') }}" class="modal-effect btn btn-sm btn-primary" style="color:white"><i
-                            class="fas fa-plus"></i>&nbsp; اضافة فاتورة</a>
+                    @can('الكاشير')
+                        <a href="{{ route('cashier') }}" class="modal-effect btn btn-sm btn-primary" style="color:white"><i
+                                class="fas fa-plus"></i>&nbsp; اضافة فاتورة</a>
+                    @endcan
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
@@ -82,12 +84,12 @@
                                     <th class="border-bottom-0">#</th>
                                     <th class="border-bottom-0">رقم الفاتورة</th>
                                     <th class="border-bottom-0">تاريخ القاتورة</th>
-                                    <th class="border-bottom-0">تاريخ الاستحقاق</th>
-                                    <th class="border-bottom-0">المنتج</th>
-                                    <th class="border-bottom-0">القسم</th>
-                                    <th class="border-bottom-0">الخصم</th>
-                                    <th class="border-bottom-0">نسبة الضريبة</th>
-                                    <th class="border-bottom-0">قيمة الضريبة</th>
+                                    {{-- <th class="border-bottom-0">تاريخ الاستحقاق</th> --}}
+                                    {{-- <th class="border-bottom-0">المنتج</th> --}}
+                                    {{-- <th class="border-bottom-0">القسم</th> --}}
+                                    {{-- <th class="border-bottom-0">الخصم</th> --}}
+                                    {{-- <th class="border-bottom-0">نسبة الضريبة</th> --}}
+                                    {{-- <th class="border-bottom-0">قيمة الضريبة</th> --}}
                                     <th class="border-bottom-0">الاجمالي</th>
                                     <th class="border-bottom-0">الحالة</th>
                                     <th class="border-bottom-0">ملاحظات</th>
@@ -98,15 +100,15 @@
                                 @foreach ($invoices as $i)
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
-                                        <td> <a href="{{ url('InvoicesDetails/' . $i->id) }}">{{ $i->invoice_number }}</a>
+                                        <td> <a href="{{ url('InvoicesDetails/' . $i->id) }}">{{ $i->order_id }}</a>
                                         </td>
                                         <td>{{ $i->invoice_Date }}</td>
-                                        <td>{{ $i->Due_date }}</td>
-                                        <td>{{ $i->product }}</td>
-                                        <td>{{ $i->section->section_name }}</td>
-                                        <td>{{ $i->Discount }}</td>
-                                        <td>{{ $i->Rate_VAT }}</td>
-                                        <td>{{ $i->Value_VAT }}</td>
+                                        {{-- <td>{{ $i->Due_date }}</td> --}}
+                                        {{-- <td>{{ $i->product }}</td> --}}
+                                        {{-- <td>{{ $i->section->section_name }}</td> --}}
+                                        {{-- <td>{{ $i->Discount }}</td> --}}
+                                        {{-- <td>{{ $i->Rate_VAT }}</td> --}}
+                                        {{-- <td>{{ $i->Value_VAT }}</td> --}}
                                         <td>{{ $i->Total }}</td>
                                         <td>
                                             @if ($i->Value_Status == 1)
@@ -124,31 +126,36 @@
                                                     class="btn ripple btn-primary btn-sm" data-toggle="dropdown"
                                                     type="button">العمليات<i class="fas fa-caret-down ml-1"></i></button>
                                                 <div class="dropdown-menu tx-13">
-                                                    <a class="dropdown-item"
+                                                    {{-- <a class="dropdown-item"
                                                         href="{{ url('updateInvoice/' . $i->id) }}">تعديل
-                                                        الفاتورة</a>
-
-                                                    <a class="dropdown-item" href="#"
-                                                        data-invoice_id="{{ $i->id }}" data-toggle="modal"
-                                                        data-target="#delete_invoice"><i
-                                                            class="text-danger fas fa-trash-alt"></i>&nbsp;&nbsp;حذف
-                                                        الفاتورة</a>
-                                                    <a class="dropdown-item" href="{{ url('changepayment/' . $i->id) }}"><i
-                                                            class=" text-success fas
+                                                        الفاتورة</a> --}}
+                                                    @can('حذف الفاتورة')
+                                                        <a class="dropdown-item" href="#"
+                                                            data-invoice_id="{{ $i->id }}" data-toggle="modal"
+                                                            data-target="#delete_invoice"><i
+                                                                class="text-danger fas fa-trash-alt"></i>&nbsp;&nbsp;حذف
+                                                            الفاتورة</a>
+                                                    @endcan
+                                                    @can('تغير حالة الدفع')
+                                                        <a class="dropdown-item" href="{{ url('changepayment/' . $i->id) }}"><i
+                                                                class=" text-success fas
                                                                                                    fa-money-bill"></i>&nbsp;&nbsp;تغير
-                                                        حالة
-                                                        الدفع</a>
-
-                                                    <a class="dropdown-item" href="#"
-                                                        data-invoice_id="{{ $i->id }}" data-toggle="modal"
-                                                        data-target="#Transfer_invoice"><i
-                                                            class="text-warning fas fa-exchange-alt"></i>&nbsp;&nbsp;نقل الي
-                                                        الارشيف</a>
-
-                                                    <a class="dropdown-item" href="printInvoice/{{ $i->id }}"><i
-                                                            class="text-success fas fa-print"></i>&nbsp;&nbsp;طباعة
-                                                        الفاتورة
-                                                    </a>
+                                                            حالة
+                                                            الدفع</a>
+                                                    @endcan
+                                                    @can('ارشفة الفاتورة')
+                                                        <a class="dropdown-item" href="#"
+                                                            data-invoice_id="{{ $i->id }}" data-toggle="modal"
+                                                            data-target="#Transfer_invoice"><i
+                                                                class="text-warning fas fa-exchange-alt"></i>&nbsp;&nbsp;نقل الي
+                                                            الارشيف</a>
+                                                    @endcan
+                                                    @can('طباعةالفاتورة')
+                                                        <a class="dropdown-item" href="printInvoice/{{ $i->id }}"><i
+                                                                class="text-success fas fa-print"></i>&nbsp;&nbsp;طباعة
+                                                            الفاتورة
+                                                        </a>
+                                                    @endcan
                                                 </div>
                                             </div>
 

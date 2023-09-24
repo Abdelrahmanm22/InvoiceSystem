@@ -31,7 +31,7 @@
                                 <label for="inputName" class="control-label">رقم الفاتورة</label>
                                 <input type="hidden" name="invoice_id" value="{{ $invoice->id }}">
                                 <input type="text" class="form-control" id="inputName" name="invoice_number"
-                                    title="يرجي ادخال رقم الفاتورة" value="{{ $invoice->invoice_number }}" required
+                                    title="يرجي ادخال رقم الفاتورة" value="{{ $invoice->order_id }}" required
                                     readonly>
                             </div>
 
@@ -41,16 +41,16 @@
                                     type="text" value="{{ $invoice->invoice_Date }}" required readonly>
                             </div>
 
-                            <div class="col">
+                            {{-- <div class="col">
                                 <label>تاريخ الاستحقاق</label>
                                 <input class="form-control fc-datepicker" name="Due_date" placeholder="YYYY-MM-DD"
                                     type="text" value="{{ $invoice->Due_date }}" required readonly>
-                            </div>
+                            </div> --}}
 
                         </div>
 
                         {{-- 2 --}}
-                        <div class="row">
+                        {{-- <div class="row">
                             <div class="col">
                                 <label for="inputName" class="control-label">القسم</label>
                                 <select name="Section" class="form-control SlectBox" onclick="console.log($(this).val())"
@@ -76,12 +76,12 @@
                                     oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
                                     value="{{ $invoice->Amount_collection }}" readonly>
                             </div>
-                        </div>
+                        </div> --}}
 
 
                         {{-- 3 --}}
 
-                        <div class="row">
+                        {{-- <div class="row">
 
                             <div class="col">
                                 <label for="inputName" class="control-label">مبلغ العمولة</label>
@@ -106,19 +106,19 @@
                                 </select>
                             </div>
 
-                        </div>
+                        </div> --}}
 
                         {{-- 4 --}}
 
                         <div class="row">
-                            <div class="col">
+                            {{-- <div class="col">
                                 <label for="inputName" class="control-label">قيمة ضريبة القيمة المضافة</label>
                                 <input type="text" class="form-control" id="Value_VAT" name="Value_VAT"
                                     value="{{ $invoice->Value_VAT }}" readonly>
-                            </div>
+                            </div> --}}
 
                             <div class="col">
-                                <label for="inputName" class="control-label">الاجمالي شامل الضريبة</label>
+                                <label for="inputName" class="control-label">الاجمالي</label>
                                 <input type="text" class="form-control" id="Total" name="Total" readonly
                                     value="{{ $invoice->Total }}">
                             </div>
@@ -128,7 +128,7 @@
                         <div class="row">
                             <div class="col">
                                 <label for="exampleTextarea">ملاحظات</label>
-                                <textarea class="form-control" id="exampleTextarea" name="note" rows="3" readonly>
+                                <textarea class="form-control" id="exampleTextarea" name="note" rows="3" >
                                 {{ $invoice->note }}</textarea>
                             </div>
                         </div><br>

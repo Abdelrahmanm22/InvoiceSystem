@@ -76,7 +76,7 @@
                                             <li><a href="#tab4" class="nav-link active" data-toggle="tab">معلومات
                                                     الفاتورة</a></li>
                                             <li><a href="#tab5" class="nav-link" data-toggle="tab">حالات الدفع</a></li>
-                                            <li><a href="#tab6" class="nav-link" data-toggle="tab">المرفقات</a></li>
+                                            <li><a href="#tab6" class="nav-link" data-toggle="tab">المنتجات</a></li>
                                         </ul>
                                     </div>
                                 </div>
@@ -94,13 +94,13 @@
                                                             <td>{{ $invoice->invoice_number }}</td>
                                                             <th scope="row">تاريخ الاصدار</th>
                                                             <td>{{ $invoice->invoice_Date }}</td>
-                                                            <th scope="row">تاريخ الاستحقاق</th>
-                                                            <td>{{ $invoice->Due_date }}</td>
-                                                            <th scope="row">القسم</th>
-                                                            <td>{{ $invoice->Section->section_name }}</td>
+                                                            {{-- <th scope="row">تاريخ الاستحقاق</th> --}}
+                                                            {{-- <td>{{ $invoice->Due_date }}</td> --}}
+                                                            {{-- <th scope="row">القسم</th> --}}
+                                                            {{-- <td>{{ $invoice->Section->section_name }}</td> --}}
                                                         </tr>
 
-                                                        <tr>
+                                                        {{-- <tr>
                                                             <th scope="row">المنتج</th>
                                                             <td>{{ $invoice->product }}</td>
                                                             <th scope="row">مبلغ التحصيل</th>
@@ -109,18 +109,17 @@
                                                             <td>{{ $invoice->Amount_Commission }}</td>
                                                             <th scope="row">الخصم</th>
                                                             <td>{{ $invoice->Discount }}</td>
-                                                        </tr>
+                                                        </tr> --}}
 
 
                                                         <tr>
-                                                            <th scope="row">نسبة الضريبة</th>
-                                                            <td>{{ $invoice->Rate_VAT }}</td>
-                                                            <th scope="row">قيمة الضريبة</th>
-                                                            <td>{{ $invoice->Value_VAT }}</td>
-                                                            <th scope="row">الاجمالي مع الضريبة</th>
+                                                            {{-- <th scope="row">نسبة الضريبة</th> --}}
+                                                            {{-- <td>{{ $invoice->Rate_VAT }}</td> --}}
+                                                            {{-- <th scope="row">قيمة الضريبة</th> --}}
+                                                            {{-- <td>{{ $invoice->Value_VAT }}</td> --}}
+                                                            <th scope="row">الاجمالي </th>
                                                             <td>{{ $invoice->Total }}</td>
                                                             <th scope="row">الحالة الحالية</th>
-
                                                             @if ($invoice->Value_Status == 1)
                                                                 <td><span
                                                                         class="badge badge-pill badge-success">{{ $invoice->Status }}</span>
@@ -154,8 +153,8 @@
                                                         <tr class="text-dark">
                                                             <th>#</th>
                                                             <th>رقم الفاتورة</th>
-                                                            <th>نوع المنتج</th>
-                                                            <th>القسم</th>
+                                                            {{-- <th>نوع المنتج</th> --}}
+                                                            {{-- <th>القسم</th> --}}
                                                             <th>حالة الدفع</th>
                                                             <th>تاريخ الدفع </th>
                                                             <th>ملاحظات</th>
@@ -170,8 +169,8 @@
                                                             <tr>
                                                                 <td>{{ $i }}</td>
                                                                 <td>{{ $x->invoice_number }}</td>
-                                                                <td>{{ $x->product }}</td>
-                                                                <td>{{ $invoice->Section->section_name }}</td>
+                                                                {{-- <td>{{ $x->product }}</td> --}}
+                                                                {{-- <td>{{ $invoice->Section->section_name }}</td> --}}
                                                                 @if ($x->Value_Status == 1)
                                                                     <td><span
                                                                             class="badge badge-pill badge-success">{{ $x->Status }}</span>
@@ -204,8 +203,8 @@
                                             <div class="card card-statistics">
 
                                                 <div class="card-body">
-                                                    <p class="text-danger">* صيغة المرفق pdf, jpeg ,.jpg , png </p>
-                                                    @can('اضافة مرفق')
+                                                    <p class="text-danger">اصناف الفاتوره </p>
+                                                    {{-- @can('اضافة مرفق')
                                                         <h5 class="card-title">اضافة مرفقات</h5>
 
                                                         <form method="post" action="{{ route('addAttach') }}"
@@ -224,7 +223,7 @@
                                                             <button type="submit" class="btn btn-primary btn-sm "
                                                                 name="uploadedFile">تاكيد</button>
                                                         </form>
-                                                    @endcan
+                                                    @endcan --}}
                                                 </div>
 
                                                 <br>
@@ -234,23 +233,28 @@
                                                         style="text-align:center">
                                                         <thead>
                                                             <tr class="text-dark">
-                                                                <th scope="col">م</th>
-                                                                <th scope="col">اسم الملف</th>
-                                                                <th scope="col">قام بالاضافة</th>
-                                                                <th scope="col">تاريخ الاضافة</th>
-                                                                <th scope="col">العمليات</th>
+                                                                <th scope="col">#</th>
+                                                                <th scope="col">اسم المنتج</th>
+                                                                <th scope="col">قسم المنتج</th>
+                                                                <th scope="col">الكميه</th>
+                                                                <th scope="col">ثمن بيع القطعه الواحده</th>
+                                                                <th scope="col">الاجمالي</th>
+                                                                <th scope="col">تاريخ الاصدار</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
                                                             <?php $i = 0; ?>
-                                                            @foreach ($attachments as $attachment)
+                                                            @foreach ($invoice->order->order_details as $o)
                                                                 <?php $i++; ?>
                                                                 <tr>
                                                                     <td>{{ $i }}</td>
-                                                                    <td>{{ $attachment->file_name }}</td>
-                                                                    <td>{{ $attachment->Created_by }}</td>
-                                                                    <td>{{ $attachment->created_at }}</td>
-                                                                    <td colspan="2">
+                                                                    <td>{{ $o->product->Product_name }}</td>
+                                                                    <td>{{ $o->section }}</td>
+                                                                    <td>{{ $o->mount }}</td>
+                                                                    <td>{{ $o->total/$o->mount }}</td>
+                                                                    <td>{{ $o->total }}</td>
+                                                                    <td>{{ $o->created_at }}</td>
+                                                                    {{-- <td colspan="2">
 
                                                                         <a class="btn btn-outline-success btn-sm"
                                                                             href="{{ url('showAttach/' . $invoice->invoice_number . '/' . $attachment->file_name) }}"
@@ -275,7 +279,7 @@
                                                                         @endcan
 
 
-                                                                    </td>
+                                                                    </td> --}}
                                                                 </tr>
                                                             @endforeach
                                                         </tbody>

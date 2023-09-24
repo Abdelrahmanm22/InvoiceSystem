@@ -18,8 +18,8 @@
     <div class="breadcrumb-header justify-content-between">
         <div class="my-auto">
             <div class="d-flex">
-                <h4 class="content-title mb-0 my-auto">الفواتير</h4><span class="text-muted mt-1 tx-13 mr-2 mb-0">/ كل
-                    الفواتير</span>
+                <h4 class="content-title mb-0 my-auto">الفواتير</h4><span class="text-muted mt-1 tx-13 mr-2 mb-0">/الفواتير المؤرشفه
+                </span>
             </div>
         </div>
 
@@ -61,12 +61,12 @@
                                     <th class="border-bottom-0">#</th>
                                     <th class="border-bottom-0">رقم الفاتورة</th>
                                     <th class="border-bottom-0">تاريخ القاتورة</th>
-                                    <th class="border-bottom-0">تاريخ الاستحقاق</th>
-                                    <th class="border-bottom-0">المنتج</th>
-                                    <th class="border-bottom-0">القسم</th>
-                                    <th class="border-bottom-0">الخصم</th>
-                                    <th class="border-bottom-0">نسبة الضريبة</th>
-                                    <th class="border-bottom-0">قيمة الضريبة</th>
+                                    {{-- <th class="border-bottom-0">تاريخ الاستحقاق</th> --}}
+                                    {{-- <th class="border-bottom-0">المنتج</th> --}}
+                                    {{-- <th class="border-bottom-0">القسم</th> --}}
+                                    {{-- <th class="border-bottom-0">الخصم</th> --}}
+                                    {{-- <th class="border-bottom-0">نسبة الضريبة</th> --}}
+                                    {{-- <th class="border-bottom-0">قيمة الضريبة</th> --}}
                                     <th class="border-bottom-0">الاجمالي</th>
                                     <th class="border-bottom-0">الحالة</th>
                                     <th class="border-bottom-0">ملاحظات</th>
@@ -77,15 +77,15 @@
                                 @foreach ($invoices as $i)
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
-                                        <td> <a href="{{ url('InvoicesDetails/' . $i->id) }}">{{ $i->invoice_number }}</a>
+                                        <td> <a href="{{ url('InvoicesDetails/' . $i->id) }}">{{ $i->order_id }}</a>
                                         </td>
                                         <td>{{ $i->invoice_Date }}</td>
-                                        <td>{{ $i->Due_date }}</td>
-                                        <td>{{ $i->product }}</td>
-                                        <td>{{ $i->section->section_name }}</td>
-                                        <td>{{ $i->Discount }}</td>
-                                        <td>{{ $i->Rate_VAT }}</td>
-                                        <td>{{ $i->Value_VAT }}</td>
+                                        {{-- <td>{{ $i->Due_date }}</td> --}}
+                                        {{-- <td>{{ $i->product }}</td> --}}
+                                        {{-- <td>{{ $i->section->section_name }}</td> --}}
+                                        {{-- <td>{{ $i->Discount }}</td> --}}
+                                        {{-- <td>{{ $i->Rate_VAT }}</td> --}}
+                                        {{-- <td>{{ $i->Value_VAT }}</td> --}}
                                         <td>{{ $i->Total }}</td>
                                         <td>
                                             @if ($i->Value_Status == 1)
@@ -143,7 +143,6 @@
                     <div class="modal-body">
                         هل انت متاكد من عملية الحذف ؟
                         <input type="hidden" name="invoice_id" id="invoice_id" value="">
-
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">الغاء</button>

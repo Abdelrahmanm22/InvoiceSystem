@@ -22,10 +22,12 @@ class InvoiceDetailsController extends Controller
      */
     public function index($id)
     {
-        $invoice = Invoice::where('id',$id)->first();
+        // $invoice = Invoice::where('id',$id)->first();
+        $invoice = Invoice::with('order')->find($id);
+        // return $invoice->order->order_details;
         $details = InvoiceDetails::where('id_Invoice',$id)->get();
-        $attachments = InvoiceAttachments::where('invoice_id',$id)->get();
-        return view('invoices.details',compact('invoice','details','attachments'));
+        // $attachments = InvoiceAttachments::where('invoice_id',$id)->get();
+        return view('invoices.details',compact('invoice','details'));
     }
 
     /**
