@@ -2,13 +2,13 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CashierController;
-use App\Http\Controllers\CustomersReportController;
 use App\Http\Controllers\InvoiceArchiveController;
 use App\Http\Controllers\InvoiceAttachmentsController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\InvoiceDetailsController;
 use App\Http\Controllers\InvoicesReportController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProductReportController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SafeController;
 use App\Http\Controllers\SectionController;
@@ -110,14 +110,15 @@ Route::get('/editProfile', [UserController::class,'profile'])->name('editProfile
 Route::get('/invoicesReport', [InvoicesReportController::class,'index'])->name('invoicesReport');
 Route::post('/Search_invoices', [InvoicesReportController::class,'Search_invoices'])->name('Search_invoices');
 
-Route::get('/customersReport', [CustomersReportController::class,'index'])->name('customersReport');
-Route::post('/Search_customers', [CustomersReportController::class,'Search_customers'])->name('Search_customers');
+Route::get('/productsReport', [ProductReportController::class,'index'])->name('customersReport');
+Route::post('/Search_customers', [ProductReportController::class,'Search_product'])->name('Search_customers');
 ////Routes for Reports ////////////////
 
 
 ////Routes for Cashier ////////////////
 Route::get('cashier', [CashierController::class, 'index'])->name('cashier');
 Route::get('get_products/{section_id}', [CashierController::class, 'get_products']);
+Route::get('getProductDetails/{product}', [CashierController::class, 'getProductDetails']);
 Route::get('get_price/{product}', [CashierController::class, 'get_price']);
 Route::post('cashier/store_order', [CashierController::class, 'store_order'])->name('store_order');
 ////Routes for Cashier ////////////////

@@ -9,10 +9,13 @@ use App\Models\OrderDetail;
 use App\Models\Product;
 use App\Models\Safe;
 use App\Models\Section;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use App\Notifications\InvoiceNotification;
+use Illuminate\Support\Facades\Notification;
 class CashierController extends Controller
 {
     //
@@ -29,6 +32,29 @@ class CashierController extends Controller
     public function get_products($section_id)
     {
         return response()->json(Section::find($section_id)->products->pluck('id', 'Product_name'));
+    }
+    public function getProductDetails($product)
+    {
+        $productData = Product::where('Product_name', $product)->first();
+        if ($productData) {
+            $name = $productData->Product_name;
+            $price = $productData->price;
+            $miniPrice = $productData->mini_price;
+            $mount = $productData->quantity;
+            $section = $productData->section->section_name;
+
+            return response()->json([
+                'section' => $section,
+                'name' => $name,
+                'price' => $price,
+                'mini_price' => $miniPrice,
+                'mount' => $mount,
+
+            ]);
+        } else {
+            // Handle the case where the product with the given ID is not found.
+            return response()->json(['error' => 'Product not found'], 404);
+        }
     }
     public function get_price($product)
     {
@@ -51,18 +77,28 @@ class CashierController extends Controller
     }
     public function getMinPrice($id)
     {
-        return Product::find($id)->mini_price;
+        $product = Product::find($id);
+        if ($product) {
+            return Product::find($id)->mini_price;
+        } else {
+            session()->flash('notFound');
+            return back();
+        }
     }
     public function getMostQuantity($id)
     {
         return Product::find($id)->quantity;
     }
-    // public function ValidationToBuy(Request $request){
 
-    // }
+    public function sendNotification($invoice){
+        $users = User::all()->except(Auth::id()); ///send to all users
+        Notification::send($users, new InvoiceNotification($invoice));
+    }
+
     public function store_order(Request $request)
     {
-        
+        // return $request;
+
         $mp = array();
         foreach ($request['products'] as $i => $product) {
             $mount = $request['mounts'][$i];
@@ -71,8 +107,14 @@ class CashierController extends Controller
             }
             $mp[$product] += $mount;
         }
+
         for ($i = 0; $i <= count($request->products) - 1; $i++) {
-            $minimumProductPrice = $this->getMinPrice($request->products[$i]);
+            $productData = Product::where('Product_name', $request->products[$i])->first();
+            if (!$productData) {
+                session()->flash('notFound');
+                return back();
+            }
+            $minimumProductPrice = $this->getMinPrice($productData->id);
             if ($request->prices[$i] < $minimumProductPrice) {
                 session()->flash('errorPrice');
                 return back();
@@ -81,7 +123,7 @@ class CashierController extends Controller
                 session()->flash('errorMount');
                 return back();
             }
-            $mostQuantity = $this->getMostQuantity($request->products[$i]);
+            $mostQuantity = $this->getMostQuantity($productData->id);
             if ($mp[$request->products[$i]] > $mostQuantity) {
                 session()->flash('mostMount');
                 return back();
@@ -90,33 +132,31 @@ class CashierController extends Controller
         $order = Order::create([
             'payment_type' => 'cashe',
         ]);
-        // return $request->status;
-        ///check availability
-        
-        // dd($mp[$request->products[0]]);
-        // return  $order;
-
         $total = 0;
         for ($i = 0; $i <= count($request->products) - 1; $i++) {
-            $product = Product::find($request->products[$i]);
+            $product = Product::where('Product_name', $request->products[$i])->first();
+            if (!$product) {
+                session()->flash('notFound');
+                return back();
+            }
             $product->update([
                 'quantity' => $product->quantity - $request->mounts[$i],
             ]);
             OrderDetail::create([
                 'order_id' => $order->id,
-                'product_id' => $request->products[$i],
-                'section' => Section::find($request->sections[$i])->section_name,
+                'product_id' => $product->id,
+                'section' => $request->sections[$i],
                 'mount' => $request->mounts[$i],
                 'total' => $request->prices[$i] * $request->mounts[$i],
             ]);
             $total += $request->prices[$i];
         }
         $validator = Validator::make($request->all(), [
-            'client'=>'max:100',
-            'phoneClient'=>'nullable|digits:11',
+            'client' => 'max:100',
+            'phoneClient' => 'nullable|digits:11',
         ], [
-            'client.max'=>'يجب ان لا يزيد اسم العميل عن  100 حرف',
-            'phoneClient.digits'=>'يجب ان يكون رقم العميل مكون من 11 رقم',
+            'client.max' => 'يجب ان لا يزيد اسم العميل عن  100 حرف',
+            'phoneClient.digits' => 'يجب ان يكون رقم العميل مكون من 11 رقم',
         ]);
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator);
@@ -124,48 +164,105 @@ class CashierController extends Controller
         $pay_status = "";
         if ($request->status == 1) {
             $pay_status = "مدفوعة";
+            Invoice::create([
+                'order_id' => $order->id,
+                'invoice_Date' => Carbon::now(),
+                'Total' => $total,
+                'partial' => $total,
+                'Status' => $pay_status,
+                'client' => $request->client,
+                'phoneClient' => $request->phoneClient,
+                'Value_Status' => $request->status,
+                'note' => $request->note,
+            ]);
+            $mySafe = Safe::get()->first();
+            $safeMoney = $mySafe->money;
+            $mySafe->update([
+                'money' => $safeMoney + $total,
+            ]);
+            ///save to InvoiceDetails//////////////
+            $invoice = Invoice::latest()->first();
+            $this->sendNotification($invoice);
+            InvoiceDetails::create([
+                'id_Invoice' => $invoice->id,
+                'invoice_number' => $order->id,
+                'Status' => $pay_status,
+                'partial' => $total,
+                'Value_Status' => $request->status,
+                'note' => $request->note,
+                'user' => (Auth::user()->name),
+            ]);
         } else if ($request->status == 2) {
             $pay_status = "غير مدفوعة";
+            Invoice::create([
+                'order_id' => $order->id,
+                'invoice_Date' => Carbon::now(),
+                'Total' => $total,
+                'partial' => 0,
+                'Status' => $pay_status,
+                'client' => $request->client,
+                'phoneClient' => $request->phoneClient,
+                'Value_Status' => $request->status,
+                'note' => $request->note,
+            ]);
+            // $mySafe = Safe::get()->first();
+            // $safeMoney = $mySafe->money;
+            // $mySafe->update([
+            //     'money' => $safeMoney + $total,
+            // ]);
+            ///save to InvoiceDetails//////////////
+            $invoice = Invoice::latest()->first();
+            $this->sendNotification($invoice);
+            InvoiceDetails::create([
+                'id_Invoice' => $invoice->id,
+                'invoice_number' => $order->id,
+                'Status' => $pay_status,
+                'partial' => 0,
+                'Value_Status' => $request->status,
+                'note' => $request->note,
+                'user' => (Auth::user()->name),
+            ]);
         } else {
             $pay_status = "مدفوعة جزئيا";
-        }
-        Invoice::create([
-            'order_id' => $order->id,
-            'invoice_Date' => Carbon::now(),
-            // 'Due_date' => $request->Due_date,
-            // 'product' => $request->product,
-            // 'section_id' => $request->Section,
-            // 'Amount_collection' => $request->Amount_collection,
-            // 'Amount_Commission' => $request->Amount_Commission,
-            // 'Discount' => $request->Discount,
-            // 'Value_VAT' => $request->Value_VAT,
-            // 'Rate_VAT' => $request->Rate_VAT,
-            'Total' => $total,
-            'Status' => $pay_status,
-            'client'=>$request->client,
-            'phoneClient'=>$request->phoneClient,
-            'Value_Status' => $request->status,
-            'note' => $request->note,
-        ]);
-        $mySafe=Safe::get()->first();
-        // return $mySafe;
-        $safeMoney = $mySafe->money;
-        $mySafe->update([
-            'money'=>$safeMoney+$total,
-        ]);
+            if ($request->partialPayment >= $total) {
+                session()->flash('partialMath');
+                return back();
+            } else if ($request->partialPayment <= 0 or !$request->partialPayment) {
+                session()->flash('partialError');
+                return back();
+            }
 
-        ///save to InvoiceDetails//////////////
-        $invoice_id = Invoice::latest()->first()->id;
-        InvoiceDetails::create([
-            'id_Invoice' => $invoice_id,
-            'invoice_number' => $order->id,
-            // 'product' => $request->product,
-            // 'Section' => $request->Section,
-            'Status' => $pay_status,
-            'Value_Status' => $request->status,
-            'note' => $request->note,
-            'user' => (Auth::user()->name),
-        ]);
+            Invoice::create([
+                'order_id' => $order->id,
+                'invoice_Date' => Carbon::now(),
+                'Total' => $total,
+                'partial' => $request->partialPayment,
+                'Status' => $pay_status,
+                'client' => $request->client,
+                'phoneClient' => $request->phoneClient,
+                'Value_Status' => $request->status,
+                'note' => $request->note,
+            ]);
+
+
+            $mySafe = Safe::get()->first();
+            $safeMoney = $mySafe->money;
+            $mySafe->update([
+                'money' => $safeMoney + $request->partialPayment,
+            ]);
+            ///save to InvoiceDetails//////////////
+            $invoice = Invoice::latest()->first();
+            $this->sendNotification($invoice);
+            InvoiceDetails::create([
+                'id_Invoice' => $invoice->id,
+                'invoice_number' => $order->id,
+                'Status' => $pay_status,
+                'Value_Status' => $request->status,
+                'partial' => $request->partialPayment,
+                'note' => $request->note,
+                'user' => (Auth::user()->name),
+            ]);
+        }
 
         $orderbacks = $order->order_details;
         session()->flash('success');

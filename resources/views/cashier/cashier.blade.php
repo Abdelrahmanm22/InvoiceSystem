@@ -99,12 +99,44 @@
             }
         </script>
     @endif
+    @if (session()->has('notFound'))
+        <script>
+            window.onload = function() {
+                notif({
+                    msg: "لا يوجد صنف بهذا الكود!",
+                    type: "warning"
+                })
+            }
+        </script>
+    @endif
 
     @if (session()->has('mostMount'))
         <script>
             window.onload = function() {
                 notif({
                     msg: "لم يتم تسجيل تلك الفاتوره بسبب صرف منتج بكمية اكبر من المتاحه علي النظام.",
+                    type: "warning"
+                })
+            }
+        </script>
+    @endif
+
+    @if (session()->has('partialMath'))
+        <script>
+            window.onload = function() {
+                notif({
+                    msg: "يجب ان يكون المبلغ الدفوع جزئيا اقل من اجمالي الفاتوره",
+                    type: "warning"
+                })
+            }
+        </script>
+    @endif
+
+    @if (session()->has('partialError'))
+        <script>
+            window.onload = function() {
+                notif({
+                    msg: "يجب اداخال المبلغ المدفوع جزئيا وان يكون اكبر من 0",
                     type: "warning"
                 })
             }
@@ -264,10 +296,10 @@
                                             <div data-repeater-item>
                                                 {{-- --------first --}}
                                                 <div class="row entry">
-                                                    <div class="col-xs-12 col-md-2">
+                                                    {{-- <div class="col-xs-12 col-md-2">
                                                         <div class="form-group">
                                                             <label>القسم</label>
-                                                            <select name="sections[]" required
+                                                            <select id="section" name="sections[]" required
                                                                 class="form-control form-control-sm">
                                                                 <option disabled selected>
                                                                     اختر قسم</option>
@@ -278,16 +310,33 @@
                                                                 @endforeach
                                                             </select>
                                                         </div>
+                                                    </div> --}}
+                                                    <div class="col-xs-12 col-md-2">
+                                                        <div class="form-group">
+                                                            <label>بحث برقم الصنف</label>
+                                                            <input class="form-control form-control-sm search" required
+                                                                id="product" name="products[]" type="text"
+                                                                placeholder="">
+                                                            <p class="error-message" style="color: red;"></p>
+                                                        </div>
                                                     </div>
                                                     <div class="col-xs-12 col-md-2">
                                                         <div class="form-group">
+                                                            <label>القسم</label>
+                                                            <input class="form-control form-control-sm " required readonly
+                                                                id="sections" name="sections[]" type="text"
+                                                                placeholder="">
+                                                        </div>
+                                                    </div>
+                                                    {{-- <div class="col-xs-12 col-md-2">
+                                                        <div class="form-group">
                                                             <label>المنتج</label>
-                                                            <select name="products[]" required
+                                                            <select id="product" name="products[]" required
                                                                 class="form-control form-control-sm">
 
                                                             </select>
                                                         </div>
-                                                    </div>
+                                                    </div> --}}
                                                     <div class="col-xs-12 col-md-1">
                                                         <div class="form-group">
                                                             <label>الكمية</label>
@@ -345,6 +394,15 @@
                                                             </button>
                                                         </div>
                                                     </div>
+                                                    {{-- <p id="error-message" style="color: red;"></p> --}}
+                                                    {{-- <div class="col-xs-12 col-md-2">
+                                                        <div class="form-group">
+                                                            <label>القسم</label>
+                                                            <input class="form-control form-control-sm " required
+                                                                id="sections" name="sections[]" type="text"
+                                                                placeholder="">
+                                                        </div>
+                                                    </div> --}}
                                                 </div>
                                             </div>
                                         </div>
@@ -366,12 +424,17 @@
                                                     <small class="form-txt text-danger">{{ $message }}</small>
                                                 @enderror
                                             </select>
+                                            <div class="col" id="partialPaymentSection" style="display: none;">
+                                                <label for="partialPayment" style="color:#850808">المبلغ المدفوع جزئيا:</label>
+                                                <input autocomplete="off" type="number" class="form-control" id="partialPayment" name="partialPayment" placeholder="يجب ادخال المبلغ المدفوع جزئيا">
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col">
                                             <label for="ClientName">اسم العميل(اختياري)</label>
-                                            <input autocomplete="off" type="text" class="form-control" id="ClientName" name="client">
+                                            <input autocomplete="off" type="text" class="form-control"
+                                                id="ClientName" name="client">
                                             @error('client')
                                                 <small class="form-txt text-danger">{{ $message }}</small>
                                             @enderror
@@ -380,7 +443,8 @@
                                     <div class="row">
                                         <div class="col">
                                             <label for="phoneClient">رقم العميل(اختياري)</label>
-                                            <input autocomplete="off" type="re" class="form-control" id="phoneClient" name="phoneClient">
+                                            <input autocomplete="off" type="re" class="form-control"
+                                                id="phoneClient" name="phoneClient">
                                             @error('phoneClient')
                                                 <small class="form-txt text-danger">{{ $message }}</small>
                                             @enderror
@@ -411,6 +475,27 @@
         <!-- row closed -->
     @endsection
     @section('js')
+        <script>
+            $(document).ready(function() {
+                // Function to toggle the visibility of the partial payment input field
+                function togglePartialPaymentInput() {
+                    var selectedOption = $('select[name="status"]').val();
+                    if (selectedOption == 3) { // مدفوعة جزئيا
+                        $('#partialPaymentSection').show();
+                    } else {
+                        $('#partialPaymentSection').hide();
+                    }
+                }
+
+                // Initial check when the page loads
+                togglePartialPaymentInput();
+
+                // Check whenever the dropdown value changes
+                $('select[name="status"]').on('change', function() {
+                    togglePartialPaymentInput();
+                });
+            });
+        </script>
 
         <script>
             //to add new product
@@ -431,7 +516,57 @@
                 });
             });
         </script>
+        <script>
+            $(document).ready(function() {
+                $(document).on('keyup', '.search', function() {
+                    var selector = $(this).closest('.entry');
+                    var query = $(this).val();
+                    var errorMessageElement = selector.find('.error-message');
+                    if (query != '') {
+                        $.ajax({
+                            url: "{{ url('getProductDetails') }}/" + query,
+                            type: "GET",
+                            dataType: "json",
+                            success: function(data) {
+                                // حذف الخيارات الحالية
+                                errorMessageElement.empty();
+                                selector.find('input[name="sections[]"]').val(data['section']);
 
+                                selector.find('input[name="prices[]"]').val(data['price']);
+                                selector.find('input[name="mini_prices[]"]').val(data[
+                                'mini_price']);
+                                selector.find('input[name="mostmounts[]"]').val(data['mount']);
+
+
+                                var price = data['price'];
+                                // Continue with your calculations
+                                var $row = selector; // Use the same selector
+                                $row.find('input[name="mounts[]"]').val(1);
+                                var mount = $row.find('input[name="mounts[]"]').val();
+                                var total = price * mount;
+                                $row.find('input[name="totals[]"]').val(total);
+
+                            },
+                            error: function() {
+                                // Clear the error message for this product entry
+                                errorMessageElement.empty();
+                                selector.find('input[name="sections[]"]').val('');
+                                selector.find('input[name="prices[]"]').val('');
+                                selector.find('input[name="mini_prices[]"]').val('');
+                                selector.find('input[name="mostmounts[]"]').val('');
+                                selector.find('input[name="totals[]"]').val('');
+                                // Set the respective error message for this product entry
+                                errorMessageElement.text('لا يوجد صنف بهذا الكود!');
+                                console.log('AJAX request failed');
+                            }
+                        });
+                    } else {
+                        errorMessageElement.empty();
+                    }
+                });
+
+            });
+        </script>
         <script>
             $(document).ready(function() {
 
@@ -497,6 +632,7 @@
 
                             },
                             error: function() {
+                                // $('#error-message').text('Product not found');
                                 console.log('AJAX request failed');
                             }
                         });

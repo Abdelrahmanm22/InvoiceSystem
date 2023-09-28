@@ -77,7 +77,7 @@
                                 @foreach ($invoices as $i)
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
-                                        <td> <a href="{{ url('InvoicesDetails/' . $i->id) }}">{{ $i->order_id }}</a>
+                                        <td> <a href="{{ url('InvoicesDetails/' . $i->id) }}">{{ $i->invoice_number }}</a>
                                         </td>
                                         <td>{{ $i->invoice_Date }}</td>
                                         {{-- <td>{{ $i->Due_date }}</td> --}}

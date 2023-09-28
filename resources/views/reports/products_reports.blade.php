@@ -15,7 +15,7 @@
     <link href="{{ URL::asset('assets/plugins/select2/css/select2.min.css') }}" rel="stylesheet">
 
 @section('title')
-    تقرير العملاء   
+    تقرير العملاء
 @stop
 @endsection
 @section('page-header')
@@ -70,6 +70,9 @@
                                 @foreach ($sections as $section)
                                     <option value="{{ $section->id }}"> {{ $section->section_name }}</option>
                                 @endforeach
+                                @error('Section')
+                                    <small class="form-txt text-danger">{{ $message }}</small>
+                                @enderror
                             </select>
                         </div>
 
@@ -120,54 +123,43 @@
                             <thead>
                                 <tr>
                                     <th class="border-bottom-0">#</th>
-                                    <th class="border-bottom-0">رقم الفاتورة</th>
-                                    <th class="border-bottom-0">تاريخ القاتورة</th>
-                                    <th class="border-bottom-0">تاريخ الاستحقاق</th>
-                                    <th class="border-bottom-0">المنتج</th>
+                                    <th class="border-bottom-0">كود المنتج</th>
                                     <th class="border-bottom-0">القسم</th>
-                                    <th class="border-bottom-0">الخصم</th>
-                                    <th class="border-bottom-0">نسبة الضريبة</th>
-                                    <th class="border-bottom-0">قيمة الضريبة</th>
+                                    <th class="border-bottom-0">الكميه</th>
                                     <th class="border-bottom-0">الاجمالي</th>
-                                    <th class="border-bottom-0">الحالة</th>
-                                    <th class="border-bottom-0">ملاحظات</th>
-
+                                    <th class="border-bottom-0">التاريخ</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php $i = 0; ?>
-                                @foreach ($details as $invoice)
+                                @foreach ($details as $d)
                                     <?php $i++; ?>
                                     <tr>
                                         <td>{{ $i }}</td>
-                                        <td>{{ $invoice->invoice_number }} </td>
-                                        <td>{{ $invoice->invoice_Date }}</td>
-                                        <td>{{ $invoice->Due_date }}</td>
-                                        <td>{{ $invoice->product }}</td>
-                                        <td><a
-                                                href="{{ url('InvoicesDetails') }}/{{ $invoice->id }}">{{ $invoice->section->section_name }}</a>
-                                        </td>
-                                        <td>{{ $invoice->Discount }}</td>
-                                        <td>{{ $invoice->Rate_VAT }}</td>
-                                        <td>{{ $invoice->Value_VAT }}</td>
-                                        <td>{{ $invoice->Total }}</td>
-                                        <td>
-                                            @if ($invoice->Value_Status == 1)
-                                                <span class="text-success">{{ $invoice->Status }}</span>
-                                            @elseif($invoice->Value_Status == 2)
-                                                <span class="text-danger">{{ $invoice->Status }}</span>
-                                            @else
-                                                <span class="text-warning">{{ $invoice->Status }}</span>
-                                            @endif
-
-                                        </td>
-
-                                        <td>{{ $invoice->note }}</td>
+                                        <td>{{ $d->product->Product_name }} </td>
+                                        <td>{{ $d->section }}</td>
+                                        <td>{{ $d->mount }}</td>
+                                        <td>{{ $d->total }}</td>
+                                        <td>{{ $d->created_at }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>
                         </table>
-
+                        <div class="d-flex justify-content-between">
+                            <p class="fw-bold">اجمالي المكسب من هذا المنتج</p>
+                            <p class="fw-bold" style="color: #35558a;">
+                                EGP{{ $details->sum('total') }}</p>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <p class="fw-bold">العدد المباع من المنتج</p>
+                            <p class="fw-bold" style="color: #35558a;">
+                                {{ $details->sum('mount') }}</p>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <p class="fw-bold">عدد المتاح من المنتج حاليا</p>
+                            <p class="fw-bold" style="color: #35558a;">
+                                {{$mount}}</p>
+                        </div>
                     @endif
                 </div>
             </div>
@@ -223,7 +215,6 @@
     var date = $('.fc-datepicker').datepicker({
         dateFormat: 'yy-mm-dd'
     }).val();
-
 </script>
 
 <script>
@@ -250,7 +241,6 @@
         });
 
     });
-
 </script>
 
 

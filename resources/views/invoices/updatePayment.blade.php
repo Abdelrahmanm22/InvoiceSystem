@@ -1,5 +1,8 @@
 @extends('layouts.master')
 @section('css')
+    <!-- MDB -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.1/mdb.min.css" rel="stylesheet" />
+
 @endsection
 @section('title')
     تغير حالة الدفع
@@ -18,6 +21,16 @@
     <!-- breadcrumb -->
 @endsection
 @section('content')
+    @if (session()->has('partialError'))
+        <script>
+            window.onload = function() {
+                notif({
+                    msg: "يجب اداخال المبلغ المدفوع جزئيا وان يكون اكبر من 0",
+                    type: "warning"
+                })
+            }
+        </script>
+    @endif
     <!-- row -->
     <div class="row">
         <div class="col-lg-12 col-md-12">
@@ -31,7 +44,7 @@
                                 <label for="inputName" class="control-label">رقم الفاتورة</label>
                                 <input type="hidden" name="invoice_id" value="{{ $invoice->id }}">
                                 <input type="text" class="form-control" id="inputName" name="invoice_number"
-                                    title="يرجي ادخال رقم الفاتورة" value="{{ $invoice->order_id }}" required
+                                    title="يرجي ادخال رقم الفاتورة" value="{{ $invoice->invoice_number }}" required
                                     readonly>
                             </div>
 
@@ -122,13 +135,18 @@
                                 <input type="text" class="form-control" id="Total" name="Total" readonly
                                     value="{{ $invoice->Total }}">
                             </div>
+                            <div class="col">
+                                <label for="inputName" class="control-label">المبلغ المدفوع حتي الان</label>
+                                <input placeholder="يجب ادخال المبلغ المدفوع جزئيا" type="text" class="form-control"
+                                    id="partial" name="partial" readonly value="{{ $invoice->partial }}">
+                            </div>
                         </div>
 
                         {{-- 5 --}}
                         <div class="row">
                             <div class="col">
                                 <label for="exampleTextarea">ملاحظات</label>
-                                <textarea class="form-control" id="exampleTextarea" name="note" rows="3" >
+                                <textarea class="form-control" id="exampleTextarea" name="note" rows="3">
                                 {{ $invoice->note }}</textarea>
                             </div>
                         </div><br>
@@ -141,6 +159,11 @@
                                     <option value="مدفوعة">مدفوعة</option>
                                     <option value="مدفوعة جزئيا">مدفوعة جزئيا</option>
                                 </select>
+                            </div>
+                            <div class="col" id="partialPaymentSection" style="display: none;">
+                                <label for="partialPayment">المبلغ المدفوع جزئيا</label>
+                                <input autocomplete="off" type="number" class="form-control" id="partialPayment"
+                                    name="partialPayment">
                             </div>
 
                             <div class="col">
@@ -183,11 +206,32 @@
     <script src="{{ URL::asset('assets/plugins/spectrum-colorpicker/spectrum.js') }}"></script>
     <!-- Internal form-elements js -->
     <script src="{{ URL::asset('assets/js/form-elements.js') }}"></script>
+    <script>
+        $(document).ready(function() {
+            // Function to toggle the visibility of the partial payment input field
+            function togglePartialPaymentInput() {
+                var selectedOption = $('select[name="Status"]').val();
+                if (selectedOption == "مدفوعة جزئيا") { // مدفوعة جزئيا
+                    $('#partialPaymentSection').show();
+                } else {
+                    $('#partialPaymentSection').hide();
+                }
+            }
 
+            // Initial check when the page loads
+            togglePartialPaymentInput();
+
+            // Check whenever the dropdown value changes
+            $('select[name="Status"]').on('change', function() {
+                togglePartialPaymentInput();
+            });
+        });
+    </script>
+    <!-- MDB -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.1/mdb.min.js"></script>
     <script>
         var date = $('.fc-datepicker').datepicker({
             dateFormat: 'yy-mm-dd'
         }).val();
-
     </script>
 @endsection

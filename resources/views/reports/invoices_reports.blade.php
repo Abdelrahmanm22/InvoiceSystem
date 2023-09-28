@@ -183,7 +183,7 @@
                             </tbody>
                         </table>
                         <div class="d-flex justify-content-between">
-                            <p class="fw-bold">Total</p>
+                            <p class="fw-bold">الاجمالي</p>
                             <p class="fw-bold" style="color: #35558a;">
                                 EGP{{ $details->sum('Total') }}</p>
                         </div>

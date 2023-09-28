@@ -156,6 +156,7 @@
                                                             {{-- <th>نوع المنتج</th> --}}
                                                             {{-- <th>القسم</th> --}}
                                                             <th>حالة الدفع</th>
+                                                            <th class="border-bottom-0">المبلغ المدفوع</th>
                                                             <th>تاريخ الدفع </th>
                                                             <th>ملاحظات</th>
                                                             <th>تاريخ الاضافة </th>
@@ -184,6 +185,7 @@
                                                                             class="badge badge-pill badge-warning">{{ $x->Status }}</span>
                                                                     </td>
                                                                 @endif
+                                                                <td>{{ $x->partial }}</td>
                                                                 <td>{{ $x->Payment_Date }}</td>
                                                                 <td>{{ $x->note }}</td>
                                                                 <td>{{ $x->created_at }}</td>

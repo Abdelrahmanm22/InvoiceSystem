@@ -13,6 +13,7 @@ class InvoiceDetails extends Model
         'invoice_number',
         // 'product',
         // 'Section',
+        'partial',
         'Status',
         'Value_Status',
         'note',

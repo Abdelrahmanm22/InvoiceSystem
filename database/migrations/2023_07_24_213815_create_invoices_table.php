@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('invoices', function (Blueprint $table) {
             $table->bigIncrements('id');
-            // $table->string('invoice_number', 50);
+            $table->string('invoice_number', 50);
             $table->unsignedBigInteger('order_id');
             $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
             $table->date('invoice_Date')->nullable();
@@ -29,6 +29,7 @@ return new class extends Migration
             // $table->decimal('Value_VAT',8,2);
             // $table->string('Rate_VAT', 999);
             $table->decimal('Total',8,2);
+            $table->decimal('partial',8,2);
             $table->string('Status', 50);
             $table->string('client', 100)->nullable();
             $table->string('phoneClient', 50)->nullable();

@@ -38,6 +38,16 @@
             }
         </script>
     @endif
+    @if (session()->has('Paid'))
+        <script>
+            window.onload = function() {
+                notif({
+                    msg: "الفاتوره مدفوعه بالفعل..لا يوجد سبب لتغير  حالتها",
+                    type: "warning"
+                })
+            }
+        </script>
+    @endif
 
     @if (session()->has('restore_invoice'))
         <script>
@@ -92,7 +102,10 @@
                                     {{-- <th class="border-bottom-0">قيمة الضريبة</th> --}}
                                     <th class="border-bottom-0">الاجمالي</th>
                                     <th class="border-bottom-0">الحالة</th>
+                                    <th class="border-bottom-0">المبلغ المدفوع</th>
                                     <th class="border-bottom-0">ملاحظات</th>
+                                    <th class="border-bottom-0">اسم العميل</th>
+                                    <th class="border-bottom-0">رقم العميل</th>
                                     <th class="border-bottom-0">العمليات</th>
                                 </tr>
                             </thead>
@@ -100,7 +113,7 @@
                                 @foreach ($invoices as $i)
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
-                                        <td> <a href="{{ url('InvoicesDetails/' . $i->id) }}">{{ $i->order_id }}</a>
+                                        <td> <a href="{{ url('InvoicesDetails/' . $i->id) }}">{{ $i->invoice_number }}</a>
                                         </td>
                                         <td>{{ $i->invoice_Date }}</td>
                                         {{-- <td>{{ $i->Due_date }}</td> --}}
@@ -119,7 +132,10 @@
                                                 <span class="text-warning">{{ $i->Status }}</span>
                                             @endif
                                         </td>
+                                        <td>{{ $i->partial }}</td>
                                         <td>{{ $i->note }}</td>
+                                        <td>{{ $i->client }}</td>
+                                        <td>{{ $i->phoneClient }}</td>
                                         <td>
                                             <div class="dropdown">
                                                 <button aria-expanded="false" aria-haspopup="true"

@@ -32,9 +32,9 @@
 </html>
 
 <script>
-    setInterval(function() {
-        $("#notifications_count").load(window.location.href + " #notifications_count");
-        $("#unreadNotifications").load(window.location.href + " #unreadNotifications");
-    }, 5000);
+    // setInterval(function() {
+    //     $("#notifications_count").load(window.location.href + " #notifications_count");
+    //     $("#unreadNotifications").load(window.location.href + " #unreadNotifications");
+    // }, 5000);
 
 </script>

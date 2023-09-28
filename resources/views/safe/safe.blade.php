@@ -304,13 +304,9 @@
         <div class="card mg-b-20">
             <div class="card-header pb-0">
                 <div class="d-flex justify-content-between">
-                    <h4 class="card-title mg-b-0">جدول الفواتير</h4>
+                    <h4 class="card-title mg-b-0">جدول السحب من الخزنه</h4>
                     <i class="mdi mdi-dots-horizontal text-gray"></i>
                 </div>
-                @can('الكاشير')
-                    <a href="{{ route('cashier') }}" class="modal-effect btn btn-sm btn-primary" style="color:white"><i
-                            class="fas fa-plus"></i>&nbsp; اضافة فاتورة</a>
-                @endcan
             </div>
             <div class="card-body">
                 <div class="table-responsive">

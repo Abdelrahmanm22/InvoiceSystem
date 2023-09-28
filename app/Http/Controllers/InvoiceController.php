@@ -16,8 +16,11 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Notification;
 use App\Exports\UsersExport;
+use App\Models\Product;
+use App\Models\Safe;
 use App\Notifications\InvoiceNotification;
 use Maatwebsite\Excel\Facades\Excel;
+
 class InvoiceController extends Controller
 {
     use attachment;
@@ -28,18 +31,18 @@ class InvoiceController extends Controller
         $this->middleware('permission:قائمة الفواتير', ['only' => ['index']]);
         $this->middleware('permission:الفواتير المدفوعة', ['only' => ['Invoice_Paid']]);
 
-        $this->middleware('permission:الفواتير المدفوعة جزئيا',['only'=>['Invoice_Partial']]);
+        $this->middleware('permission:الفواتير المدفوعة جزئيا', ['only' => ['Invoice_Partial']]);
         $this->middleware('permission:الفواتير الغير مدفوعة', ['only' => ['Invoice_unPaid']]);
         $this->middleware('permission:الكاشير', ['only' => ['create', 'store']]);
         $this->middleware('permission:حذف الفاتورة', ['only' => ['destroy']]);
         $this->middleware('permission:تعديل الفاتورة', ['only' => ['edit', 'update']]);
         $this->middleware('permission:تصدير EXCEL', ['only' => ['export']]);
-        $this->middleware('permission:تغير حالة الدفع', ['only' => ['changepayment','postchangepayment']]);
+        $this->middleware('permission:تغير حالة الدفع', ['only' => ['changepayment', 'postchangepayment']]);
         $this->middleware('permission:ارشفة الفاتورة', ['only' => ['archive']]);
         // $this->middleware('permission:طباعة الفاتورة', ['only' => ['printInvoice']]);
         $this->middleware('permission:طباعةالفاتورة', ['only' => ['printInvoice']]);
     }
-    
+
     /**
      * Display a listing of the resource.
      *
@@ -47,7 +50,7 @@ class InvoiceController extends Controller
      */
     public function index()
     {
-        $invoices = Invoice::get();
+        $invoices = Invoice::orderBy('id', 'desc')->get();
         // return $invoices->order;
         return view('invoices.invoices', compact('invoices'));
     }
@@ -55,20 +58,20 @@ class InvoiceController extends Controller
 
     public function Invoice_Paid()
     {
-        $invoices = Invoice::where('Value_Status', 1)->get();
-        return view('invoices.invoices_paid',compact('invoices'));
+        $invoices = Invoice::where('Value_Status', 1)->orderBy('id', 'desc')->get();
+        return view('invoices.invoices_paid', compact('invoices'));
     }
 
     public function Invoice_unPaid()
     {
-        $invoices = Invoice::where('Value_Status',2)->get();
-        return view('invoices.invoices_unpaid',compact('invoices'));
+        $invoices = Invoice::where('Value_Status', 2)->orderBy('id', 'desc')->get();
+        return view('invoices.invoices_unpaid', compact('invoices'));
     }
 
     public function Invoice_Partial()
     {
-        $invoices = Invoice::where('Value_Status',3)->get();
-        return view('invoices.invoices_Partial',compact('invoices'));
+        $invoices = Invoice::where('Value_Status', 3)->orderBy('id', 'desc')->get();
+        return view('invoices.invoices_Partial', compact('invoices'));
     }
 
     /**
@@ -117,7 +120,7 @@ class InvoiceController extends Controller
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator);
         }
-        
+
 
         Invoice::create([
             'invoice_number' => $request->invoice_number,
@@ -148,22 +151,22 @@ class InvoiceController extends Controller
             'note' => $request->note,
             'user' => (Auth::user()->name),
         ]);
-        
-        
+
+
         ///save to InvoiceAttachments if picture exists//////////////
-        if ($request->hasFile('pic')) {
-            $invoice_number = $request->invoice_number;
-            $image_file_name = $this->save(
-                $request->file('pic'),
-                'attachment/' . $invoice_number
-            );
-            $attachments = new InvoiceAttachments();
-            $attachments->file_name = $image_file_name;
-            $attachments->invoice_number = $invoice_number;
-            $attachments->Created_by = Auth::user()->name;
-            $attachments->invoice_id = $invoice_id;
-            $attachments->save();
-        }
+        // if ($request->hasFile('pic')) {
+        //     $invoice_number = $request->invoice_number;
+        //     $image_file_name = $this->save(
+        //         $request->file('pic'),
+        //         'attachment/' . $invoice_number
+        //     );
+        //     $attachments = new InvoiceAttachments();
+        //     $attachments->file_name = $image_file_name;
+        //     $attachments->invoice_number = $invoice_number;
+        //     $attachments->Created_by = Auth::user()->name;
+        //     $attachments->invoice_id = $invoice_id;
+        //     $attachments->save();
+        // }
 
         //mail notification
         // $user = Auth::user();
@@ -281,12 +284,34 @@ class InvoiceController extends Controller
     public function destroy(Request $request)
     {
         $invoice = Invoice::where('id', $request->invoice_id)->first();
-        $Details = InvoiceAttachments::where('invoice_id', $request->invoice_id)->first();
+        // $Details = InvoiceAttachments::where('invoice_id', $request->invoice_id)->first();
+        // return $invoice;
 
-        if (!empty($Details->invoice_number)) {
-            Storage::disk('public_uploads')->deleteDirectory($Details->invoice_number);
+
+        // return $invoice->order->order_details;
+        $order_details = $invoice->order->order_details;
+        foreach ($order_details as $i) {
+            $product_id = $i->product_id;
+            $product = Product::where('id', $product_id)->first();
+            $product->update([
+                'quantity' => $product->quantity + $i->mount,
+            ]);
         }
+        $mySafe = Safe::get()->first();
+        $safeMoney = $mySafe->money;
+        if ($invoice->Status === 'مدفوعة') {
+            $mySafe->update([
+                'money' => $safeMoney - $invoice->Total,
+            ]);
+        } else if ($invoice->Status = "مدفوعة جزئيا") {
+            $mySafe->update([
+                'money' => $safeMoney - $invoice->partial,
+            ]);
+        }
+
+
         $invoice->forceDelete();
+
         $invoice->order->delete();
         session()->flash('delete_invoice');
         return redirect('/invoices');
@@ -300,47 +325,72 @@ class InvoiceController extends Controller
         return redirect('/Archive');
     }
 
-    public function changePayment($id){
+    public function changePayment($id)
+    {
         $invoice = Invoice::where('id', $id)->first();
-        return view('invoices.updatePayment',compact('invoice'));
+        if ($invoice->Status === 'مدفوعة') {
+            session()->flash('Paid');
+            return back();
+        }
+        return view('invoices.updatePayment', compact('invoice'));
     }
 
-    public function postChangePayment(Request $request){
+    public function postChangePayment(Request $request)
+    {
+        // return $request;
+        if ($request->partialPayment <= 0 or !$request->partialPayment) {
+            session()->flash('partialError');
+            return back();
+        }
+
         $id = $request->invoice_id;
         $invoices = Invoice::findOrFail($id);
 
-        if ($request->Status === 'مدفوعة') {
+        $mySafe = Safe::get()->first();
+        $safeMoney = $mySafe->money;
+    
+        // return $request->partialPayment+$invoices->partial.' '.$$invoices->Total;
+        if ($request->Status === 'مدفوعة' or ($request->partialPayment + $invoices->partial >= $invoices->Total)) {
+            $mySafe->update([
+                'money' => $safeMoney + ($invoices->Total-$invoices->partial),
+            ]);
 
             $invoices->update([
                 'Value_Status' => 1,
-                'Status' => $request->Status,
+                'Status' => 'مدفوعة',
+                'partial' => $invoices->Total,
                 'Payment_Date' => $request->Payment_Date,
             ]);
-
             InvoiceDetails::create([
                 'id_Invoice' => $request->invoice_id,
                 'invoice_number' => $request->invoice_number,
                 // 'product' => $request->product,
                 // 'Section' => $request->Section,
+                'partial' => $invoices->Total,
                 'Status' => $request->Status,
                 'Value_Status' => 1,
                 'note' => $request->note,
                 'Payment_Date' => $request->Payment_Date,
                 'user' => (Auth::user()->name),
             ]);
-        }
+        } else {
+            $mySafe->update([
+                'money' => $safeMoney + $request->partialPayment,
+            ]);
 
-        else {
             $invoices->update([
                 'Value_Status' => 3,
                 'Status' => $request->Status,
+                'partial' => $invoices->partial + $request->partialPayment,
                 'Payment_Date' => $request->Payment_Date,
             ]);
+
             InvoiceDetails::create([
                 'id_Invoice' => $request->invoice_id,
                 'invoice_number' => $request->invoice_number,
                 // 'product' => $request->product,
                 // 'Section' => $request->Section,
+                'partial' => $request->partialPayment,
                 'Status' => $request->Status,
                 'Value_Status' => 3,
                 'note' => $request->note,
@@ -350,31 +400,33 @@ class InvoiceController extends Controller
         }
         session()->flash('Status_Update');
         return redirect('/invoices');
-
     }
 
-    public function printInvoice($id){
+    public function printInvoice($id)
+    {
         $invoice = Invoice::findOrFail($id);
-        return view('invoices.printInvoice',compact('invoice'));
+        return view('invoices.printInvoice', compact('invoice'));
     }
 
-    public function export() 
+    public function export()
     {
         return Excel::download(new InvoicesExport, 'Invoices.xlsx');
     }
 
-    public function MarkAsRead_all(){
-        $userUnreadNotification= auth()->user()->unreadNotifications;
+    public function MarkAsRead_all()
+    {
+        $userUnreadNotification = auth()->user()->unreadNotifications;
 
-        if($userUnreadNotification) {
+        if ($userUnreadNotification) {
             $userUnreadNotification->markAsRead();
             return back();
         }
     }
 
-    public function MarkAsRead($id,$nty){
-        $userUnreadNotification= auth()->user()->unreadNotifications;
-        if($userUnreadNotification) {
+    public function MarkAsRead($id, $nty)
+    {
+        $userUnreadNotification = auth()->user()->unreadNotifications;
+        if ($userUnreadNotification) {
 
             foreach ($userUnreadNotification as $notification) {
                 if ($notification->id == $nty) {
@@ -382,11 +434,7 @@ class InvoiceController extends Controller
                     return redirect()->route('InvoicesDetails', ['id' => $id]);
                 }
             }
-            
-            
         }
         return back();
-
     }
-
 }
