@@ -51,12 +51,19 @@ class Invoice extends Model
                 $invoice->invoice_number = 'INV-'.$year .'-'. '1';
             } else {
                 $expNum = explode('-', $lastInvoice->invoice_number);
-                // return $expNum;
                 $nextInvoiceNumber = $expNum[0].'-'.$expNum[1] . '-' . $expNum[2] + 1;
-                // $lastInvoiceNumber = intval(substr($lastInvoice->invoice_number, 4));
-                // $newInvoiceNumber = str_pad($lastInvoiceNumber + 1, 5, '0', STR_PAD_LEFT);
                 $invoice->invoice_number = $nextInvoiceNumber;
             }
         });
+    }
+
+    public function scopeLastFiveMonthsTotal($query)
+    {
+        return $query
+            ->selectRaw('YEAR(invoice_Date) as year, MONTH(invoice_Date) as month, SUM(Total) as total')
+            ->whereBetween('invoice_Date', [now()->subMonths(4)->startOfMonth(), now()->endOfMonth()])
+            ->groupBy('year', 'month')
+            ->orderBy('year', 'desc')
+            ->orderBy('month', 'desc');
     }
 }

@@ -15,7 +15,7 @@
     <link href="{{ URL::asset('assets/plugins/select2/css/select2.min.css') }}" rel="stylesheet">
 
 @section('title')
-    تقرير الفواتير 
+    تقرير الفواتير
 @stop
 @endsection
 @section('page-header')
@@ -67,7 +67,8 @@
 
 
                     <div class="col-lg-3 mg-t-20 mg-lg-t-0">
-                        <label class="rdiobox"><input name="rdio" value="2" type="radio"><span>بحث برقم الفاتورة
+                        <label class="rdiobox"><input name="rdio" value="2" type="radio"><span>بحث برقم
+                                الفاتورة
                             </span></label>
                     </div><br><br>
 
@@ -144,7 +145,11 @@
                                     {{-- <th class="border-bottom-0">قيمة الضريبة</th> --}}
                                     <th class="border-bottom-0">الاجمالي</th>
                                     <th class="border-bottom-0">الحالة</th>
+                                    <th class="border-bottom-0">المبلغ المدفوع</th>
                                     <th class="border-bottom-0">ملاحظات</th>
+                                    <th class="border-bottom-0">اسم العميل</th>
+                                    <th class="border-bottom-0">رقم العميل</th>
+                                    {{-- <th class="border-bottom-0">العمليات</th> --}}
                                 </tr>
                             </thead>
                             <tbody>
@@ -153,7 +158,8 @@
                                     <?php $i++; ?>
                                     <tr>
                                         <td>{{ $i }}</td>
-                                        <td> <a href="{{ url('InvoicesDetails/' . $invoice->id) }}">{{ $invoice->order_id }}</a>
+                                        <td> <a
+                                                href="{{ url('InvoicesDetails/' . $invoice->id) }}">{{ $invoice->invoice_number }}</a>
                                         </td>
                                         <td>{{ $invoice->invoice_Date }}</td>
                                         {{-- <td>{{ $invoice->Due_date }}</td> --}}
@@ -176,10 +182,13 @@
 
                                         </td>
 
+                                        <td>{{ $invoice->partial }}</td>
                                         <td>{{ $invoice->note }}</td>
+                                        <td>{{ $invoice->client }}</td>
+                                        <td>{{ $invoice->phoneClient }}</td>
                                     </tr>
                                 @endforeach
-                                
+
                             </tbody>
                         </table>
                         <div class="d-flex justify-content-between">
@@ -187,7 +196,6 @@
                             <p class="fw-bold" style="color: #35558a;">
                                 EGP{{ $details->sum('Total') }}</p>
                         </div>
-
                     @endif
                 </div>
             </div>
@@ -243,7 +251,6 @@
     var date = $('.fc-datepicker').datepicker({
         dateFormat: 'yy-mm-dd'
     }).val();
-
 </script>
 
 <script>
@@ -265,7 +272,6 @@
             }
         });
     });
-
 </script>
 
 

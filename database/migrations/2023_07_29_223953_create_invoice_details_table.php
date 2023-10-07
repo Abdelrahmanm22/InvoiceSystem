@@ -20,7 +20,7 @@ return new class extends Migration
             $table->foreign('id_Invoice')->references('id')->on('invoices')->onDelete('cascade');
             // $table->string('product', 50);
             // $table->string('Section', 999);
-            $table->decimal('partial',8,2);
+            $table->decimal('partial',10,2);
             $table->string('Status', 50);
             $table->integer('Value_Status');
             $table->date('Payment_Date')->nullable();

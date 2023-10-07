@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('safes', function (Blueprint $table) {
             $table->id();
-            $table->decimal('money',8,2);
+            $table->decimal('money',10,2);
             $table->timestamps();
         });
     }

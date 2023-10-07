@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use App\Notifications\InvoiceNotification;
 use Illuminate\Support\Facades\Notification;
+
 class CashierController extends Controller
 {
     //
@@ -90,7 +91,8 @@ class CashierController extends Controller
         return Product::find($id)->quantity;
     }
 
-    public function sendNotification($invoice){
+    public function sendNotification($invoice)
+    {
         $users = User::all()->except(Auth::id()); ///send to all users
         Notification::send($users, new InvoiceNotification($invoice));
     }
@@ -129,9 +131,6 @@ class CashierController extends Controller
                 return back();
             }
         }
-        $order = Order::create([
-            'payment_type' => 'cashe',
-        ]);
         $total = 0;
         for ($i = 0; $i <= count($request->products) - 1; $i++) {
             $product = Product::where('Product_name', $request->products[$i])->first();
@@ -139,6 +138,23 @@ class CashierController extends Controller
                 session()->flash('notFound');
                 return back();
             }
+            $total += $request->prices[$i] * $request->mounts[$i];
+        }
+        if ($request->status == 3) {
+            if ($request->partialPayment >= $total) {
+                session()->flash('partialMath');
+                return back();
+            } else if ($request->partialPayment <= 0 or !$request->partialPayment) {
+                session()->flash('partialError');
+                return back();
+            }
+        }
+        $order = Order::create([
+            'payment_type' => 'cashe',
+        ]);
+
+        for ($i = 0; $i <= count($request->products) - 1; $i++) {
+            $product = Product::where('Product_name', $request->products[$i])->first();
             $product->update([
                 'quantity' => $product->quantity - $request->mounts[$i],
             ]);
@@ -149,8 +165,8 @@ class CashierController extends Controller
                 'mount' => $request->mounts[$i],
                 'total' => $request->prices[$i] * $request->mounts[$i],
             ]);
-            $total += $request->prices[$i];
         }
+        // return $total;
         $validator = Validator::make($request->all(), [
             'client' => 'max:100',
             'phoneClient' => 'nullable|digits:11',
@@ -224,14 +240,6 @@ class CashierController extends Controller
             ]);
         } else {
             $pay_status = "مدفوعة جزئيا";
-            if ($request->partialPayment >= $total) {
-                session()->flash('partialMath');
-                return back();
-            } else if ($request->partialPayment <= 0 or !$request->partialPayment) {
-                session()->flash('partialError');
-                return back();
-            }
-
             Invoice::create([
                 'order_id' => $order->id,
                 'invoice_Date' => Carbon::now(),

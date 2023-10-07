@@ -14,7 +14,7 @@
         <div class="row no-gutter">
             <!-- The image half -->
             <!-- The content half -->
-            <div class="col-md-6 col-lg-6 col-xl-5 bg-white">
+            <div class="col-md-12 col-lg-12 col-xl-12 bg-white">
                 <div class="login d-flex align-items-center py-2">
                     <!-- Demo content-->
                     <div class="container p-0">
@@ -28,7 +28,7 @@
                                     </div>
                                     <div class="card-sigin">
                                         <div class="main-signup-header">
-                                            <h2>مرحبا بك</h2>
+                                            {{-- <h2>مرحبا بك</h2> --}}
                                             <h5 class="font-weight-semibold mb-4"> تسجيل الدخول</h5>
                                             <form method="POST" action="{{ route('login') }}">
                                                 @csrf

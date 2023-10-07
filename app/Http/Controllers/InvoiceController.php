@@ -79,12 +79,12 @@ class InvoiceController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
-    {
-        //
-        $sections = Section::get();
-        return view('invoices.addInvoice', compact('sections'));
-    }
+    // public function create()
+    // {
+    //     //
+    //     $sections = Section::get();
+    //     return view('invoices.addInvoice', compact('sections'));
+    // }
 
     /**
      * Store a newly created resource in storage.
@@ -92,98 +92,98 @@ class InvoiceController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
-    {
-        // return $request;
-        $validator = Validator::make($request->all(), [
-            'invoice_number' => 'required|unique:invoices',
-            'invoice_Date' => 'required',
-            'Due_date' => 'required',
-            'product' => 'required',
-            'Section' => 'required',
-            'Amount_collection' => 'required',
-            'Amount_Commission' => 'required',
-            'Discount' => 'required',
-            'Rate_VAT' => 'required',
-        ], [
-            'invoice_number.required' => 'يرجي ادخال رقم الفاتوره',
-            'invoice_number.unique' => 'رقم الفاتوره مسجل مسبقا',
-            'invoice_Date.required' => 'يرجي ادخال  تاريخ الفاتوره',
-            'Due_date.required' => 'يرجي ادخال تاريخ الاستحقاق',
-            'product.required' => 'يرجي ادخال اسم المنتج',
-            'Section.required' => 'يرجي ادخال اسم القسم',
-            'Amount_collection.required' => 'يرجي ادخال مبلغ التحصيل',
-            'Amount_Commission.required' => 'يرجي ادخال مبلغ العموله',
-            'Discount.required' => 'يرجي ادخال الخصم',
-            'Rate_VAT.required' => 'يرجي ادخال نسبة ضريبة القيمه المضافه',
-        ]);
-        if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator);
-        }
+    // public function store(Request $request)
+    // {
+    //     // return $request;
+    //     $validator = Validator::make($request->all(), [
+    //         'invoice_number' => 'required|unique:invoices',
+    //         'invoice_Date' => 'required',
+    //         'Due_date' => 'required',
+    //         'product' => 'required',
+    //         'Section' => 'required',
+    //         'Amount_collection' => 'required',
+    //         'Amount_Commission' => 'required',
+    //         'Discount' => 'required',
+    //         'Rate_VAT' => 'required',
+    //     ], [
+    //         'invoice_number.required' => 'يرجي ادخال رقم الفاتوره',
+    //         'invoice_number.unique' => 'رقم الفاتوره مسجل مسبقا',
+    //         'invoice_Date.required' => 'يرجي ادخال  تاريخ الفاتوره',
+    //         'Due_date.required' => 'يرجي ادخال تاريخ الاستحقاق',
+    //         'product.required' => 'يرجي ادخال اسم المنتج',
+    //         'Section.required' => 'يرجي ادخال اسم القسم',
+    //         'Amount_collection.required' => 'يرجي ادخال مبلغ التحصيل',
+    //         'Amount_Commission.required' => 'يرجي ادخال مبلغ العموله',
+    //         'Discount.required' => 'يرجي ادخال الخصم',
+    //         'Rate_VAT.required' => 'يرجي ادخال نسبة ضريبة القيمه المضافه',
+    //     ]);
+    //     if ($validator->fails()) {
+    //         return redirect()->back()->withErrors($validator);
+    //     }
 
 
-        Invoice::create([
-            'invoice_number' => $request->invoice_number,
-            'invoice_Date' => $request->invoice_Date,
-            'Due_date' => $request->Due_date,
-            'product' => $request->product,
-            'section_id' => $request->Section,
-            'Amount_collection' => $request->Amount_collection,
-            'Amount_Commission' => $request->Amount_Commission,
-            'Discount' => $request->Discount,
-            'Value_VAT' => $request->Value_VAT,
-            'Rate_VAT' => $request->Rate_VAT,
-            'Total' => $request->Total,
-            'Status' => 'غير مدفوعة',
-            'Value_Status' => 2,
-            'note' => $request->note,
-        ]);
+    //     Invoice::create([
+    //         'invoice_number' => $request->invoice_number,
+    //         'invoice_Date' => $request->invoice_Date,
+    //         'Due_date' => $request->Due_date,
+    //         'product' => $request->product,
+    //         'section_id' => $request->Section,
+    //         'Amount_collection' => $request->Amount_collection,
+    //         'Amount_Commission' => $request->Amount_Commission,
+    //         'Discount' => $request->Discount,
+    //         'Value_VAT' => $request->Value_VAT,
+    //         'Rate_VAT' => $request->Rate_VAT,
+    //         'Total' => $request->Total,
+    //         'Status' => 'غير مدفوعة',
+    //         'Value_Status' => 2,
+    //         'note' => $request->note,
+    //     ]);
 
-        ///save to InvoiceDetails//////////////
-        $invoice_id = Invoice::latest()->first()->id;
-        InvoiceDetails::create([
-            'id_Invoice' => $invoice_id,
-            'invoice_number' => $request->invoice_number,
-            'product' => $request->product,
-            'Section' => $request->Section,
-            'Status' => 'غير مدفوعة',
-            'Value_Status' => 2,
-            'note' => $request->note,
-            'user' => (Auth::user()->name),
-        ]);
-
-
-        ///save to InvoiceAttachments if picture exists//////////////
-        // if ($request->hasFile('pic')) {
-        //     $invoice_number = $request->invoice_number;
-        //     $image_file_name = $this->save(
-        //         $request->file('pic'),
-        //         'attachment/' . $invoice_number
-        //     );
-        //     $attachments = new InvoiceAttachments();
-        //     $attachments->file_name = $image_file_name;
-        //     $attachments->invoice_number = $invoice_number;
-        //     $attachments->Created_by = Auth::user()->name;
-        //     $attachments->invoice_id = $invoice_id;
-        //     $attachments->save();
-        // }
-
-        //mail notification
-        // $user = Auth::user();
-        // Notification::send($user, new addInvoice($invoice_id));
-        // $user->notify(new addInvoice($invoice_id));
+    //     ///save to InvoiceDetails//////////////
+    //     $invoice_id = Invoice::latest()->first()->id;
+    //     InvoiceDetails::create([
+    //         'id_Invoice' => $invoice_id,
+    //         'invoice_number' => $request->invoice_number,
+    //         'product' => $request->product,
+    //         'Section' => $request->Section,
+    //         'Status' => 'غير مدفوعة',
+    //         'Value_Status' => 2,
+    //         'note' => $request->note,
+    //         'user' => (Auth::user()->name),
+    //     ]);
 
 
+    //     ///save to InvoiceAttachments if picture exists//////////////
+    //     // if ($request->hasFile('pic')) {
+    //     //     $invoice_number = $request->invoice_number;
+    //     //     $image_file_name = $this->save(
+    //     //         $request->file('pic'),
+    //     //         'attachment/' . $invoice_number
+    //     //     );
+    //     //     $attachments = new InvoiceAttachments();
+    //     //     $attachments->file_name = $image_file_name;
+    //     //     $attachments->invoice_number = $invoice_number;
+    //     //     $attachments->Created_by = Auth::user()->name;
+    //     //     $attachments->invoice_id = $invoice_id;
+    //     //     $attachments->save();
+    //     // }
 
-        //normal notification
-        $invoice = Invoice::latest()->first();
-        $users = User::all()->except(Auth::id()); ///send to all users
-        Notification::send($users, new InvoiceNotification($invoice));
+    //     //mail notification
+    //     // $user = Auth::user();
+    //     // Notification::send($user, new addInvoice($invoice_id));
+    //     // $user->notify(new addInvoice($invoice_id));
 
 
-        session()->flash('Add', 'تم اضافة فاتوره بنجاح ');
-        return redirect('/addInvoices');
-    }
+
+    //     //normal notification
+    //     $invoice = Invoice::latest()->first();
+    //     $users = User::all()->except(Auth::id()); ///send to all users
+    //     Notification::send($users, new InvoiceNotification($invoice));
+
+
+    //     session()->flash('Add', 'تم اضافة فاتوره بنجاح ');
+    //     return redirect('/addInvoices');
+    // }
 
     /**
      * Display the specified resource.

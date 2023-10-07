@@ -92,7 +92,7 @@
                                 <tr>
                                     <th class="border-bottom-0">#</th>
                                     <th class="border-bottom-0"> اسم المنتج</th>
-                                    <th class="border-bottom-0"> الوصف</th>
+                                    <th class="border-bottom-0"> ملاحظات</th>
                                     <th class="border-bottom-0"> القسم</th>
                                     <th class="border-bottom-0"> سعر المنتج</th>
                                     <th class="border-bottom-0"> اقل سعر بيع للمنتج</th>
@@ -118,7 +118,9 @@
 
                                             @can('تعديل منتج')
                                                 <a class="modal-effect btn btn-sm btn-info" data-effect="effect-scale"
-                                                    data-id="{{ $p->id }}" data-name="{{ $p->Product_name }}"
+                                                    data-id="{{ $p->id }}"
+                                                    {{-- data-code="{{ $p->Product_code }}" --}}
+                                                    data-name="{{ $p->Product_name }}"
                                                     data-price="{{ $p->price }}"
                                                     data-mini_price="{{ $p->mini_price }}"
                                                     data-wholesale_price="{{ $p->Wholesale_Price}}"
@@ -158,6 +160,11 @@
                     <form action="{{ route('products.store') }}" method="post">
                         {{ csrf_field() }}
 
+                        {{-- <div class="form-group">
+                            <label for="Product_code">كود المنتج</label>
+                            <input autocomplete="off" type="text" class="form-control" id="Product_code"
+                                name="Product_code">
+                        </div> --}}
                         <div class="form-group">
                             <label for="Product_name">اسم المنتج</label>
                             <input autocomplete="off" type="text" class="form-control" id="Product_name"
@@ -225,6 +232,11 @@
                     <form action="{{ route('products.update') }}" method="post" autocomplete="off">
                         {{ method_field('post') }}
                         {{ csrf_field() }}
+                        {{-- <div class="form-group">
+                            <label for="Product_code" class="col-form-label">اسم المنتج:</label>
+                            <input autocomplete="off" class="form-control" name="Product_code" id="Product_code"
+                                type="text">
+                        </div> --}}
                         <div class="form-group">
                             <input type="hidden" name="id" id="id" value="">
                             <label for="Product_name" class="col-form-label">اسم المنتج:</label>
@@ -327,6 +339,7 @@
         $('#exampleModal2').on('show.bs.modal', function(event) {
             var button = $(event.relatedTarget)
             var id = button.data('id')
+            // var Product_code = button.data('code')
             var Product_name = button.data('name')
             var section_name = button.data('section_name')
             var description = button.data('description')
@@ -336,6 +349,7 @@
             var quantity = button.data('quantity')
             var modal = $(this)
             modal.find('.modal-body #id').val(id);
+            // modal.find('.modal-body #Product_name').val(Product_name);
             modal.find('.modal-body #Product_name').val(Product_name);
             modal.find('.modal-body #description').val(description);
             modal.find('.modal-body #section_id').val(section_name);

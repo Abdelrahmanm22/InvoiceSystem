@@ -15,6 +15,7 @@ class OrderDetail extends Model
         'mount',
         'total',
         // 'discount',
+        'created_at',
     ];
     public function product(){
         return $this->belongsTo(Product::class,'product_id');

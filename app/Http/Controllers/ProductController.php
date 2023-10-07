@@ -55,6 +55,7 @@ class ProductController extends Controller
         //
         // dd($request);
         $validatedData = $request->validate([
+            // 'Product_code'=>'required|unique:products|max:99',
             'Product_name' => 'required|unique:products|max:255',
             'section_id' => 'required',
             'price' => 'required|numeric|digits_between:1,10000',
@@ -62,6 +63,8 @@ class ProductController extends Controller
             'Wholesale_Price' => 'required|numeric|between:0,100000',
             'quantity' => 'required|numeric|between:0,100000',
         ], [
+            // 'Product_code.required' => 'يرجي ادخال كود المنتج',
+            // 'Product_code.unique' => 'كود المنتج مسجل مسبقا',
             'Product_name.required' => 'يرجي ادخال اسم المنتج',
             'Product_name.unique' => 'اسم المنتج مسجل مسبقا',
             'section_id.required' => 'يرجي اختيار اسم القسم',
@@ -83,6 +86,7 @@ class ProductController extends Controller
 
         //push data in database
         Product::create([
+            // 'Product_code'=>$request->Product_code,
             'Product_name' => $request->Product_name,
             'description' => $request->description,
             'price' => $request->price,
@@ -130,6 +134,7 @@ class ProductController extends Controller
         $id = $request->id;
 
         $this->validate($request, [
+            // 'Product_code'=>'required|max:99|unique:products,Product_name,'.$id,
             'Product_name' => 'required|max:255|unique:products,Product_name,' . $id, //عشان امنع التقرار في التعديل
             'section_id' => 'required',
             'price' => 'required|numeric|digits_between:1,10000',
@@ -137,6 +142,9 @@ class ProductController extends Controller
             'Wholesale_Price' => 'required|numeric|between:0,100000',
             'quantity' => 'required|numeric|between:0,100000',
         ], [
+            
+            // 'Product_code.required' => 'يرجي ادخال كود المنتج',
+            // 'Product_code.unique' => 'كود المنتج مسجل مسبقا',
             'Product_name.required' => 'يرجي ادخال اسم المنتج',
             'Product_name.unique' => 'اسم المنتج مسجل مسبقا',
             'section_id.required' => 'يرجي اختيار اسم القسم',
@@ -159,6 +167,7 @@ class ProductController extends Controller
 
         $products = Product::find($id);
         $products->update([
+            // 'Product_code'=>$request->Product_code,
             'Product_name' => $request->Product_name,
             'description' => $request->description,
             'price' => $request->price,

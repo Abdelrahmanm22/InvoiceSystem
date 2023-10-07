@@ -49,8 +49,9 @@ class ProductReportController extends Controller
 
         else {
 
-            $start_at = date($request->start_at);
-            $end_at = date($request->end_at);
+            $start_at = $request->start_at . ' 00:00:00';
+            $end_at = $request->end_at . ' 23:59:59';
+
             $productSale = OrderDetail::whereBetween('created_at',[$start_at,$end_at])->where('product_id', $product->id)->get();
 
             $sections = Section::all();

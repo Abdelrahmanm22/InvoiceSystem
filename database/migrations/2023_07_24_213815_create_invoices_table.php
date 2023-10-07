@@ -28,8 +28,8 @@ return new class extends Migration
             // $table->decimal('Discount',8,2);
             // $table->decimal('Value_VAT',8,2);
             // $table->string('Rate_VAT', 999);
-            $table->decimal('Total',8,2);
-            $table->decimal('partial',8,2);
+            $table->decimal('Total',10,2);
+            $table->decimal('partial',10,2);
             $table->string('Status', 50);
             $table->string('client', 100)->nullable();
             $table->string('phoneClient', 50)->nullable();

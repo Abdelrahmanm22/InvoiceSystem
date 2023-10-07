@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
+            // $table->string('Product_code', 99);
             $table->string('Product_name', 999);
             $table->text('description')->nullable();
             $table->string('user', 999);
@@ -24,6 +25,7 @@ return new class extends Migration
             $table->integer('quantity');
             $table->unsignedBigInteger('section_id');
             $table->foreign('section_id')->references('id')->on('sections')->onDelete('cascade');
+            // $table->softDeletes(); //To Prevent delete product from orders
             $table->timestamps();
         });
     }

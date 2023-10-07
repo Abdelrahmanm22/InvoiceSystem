@@ -55,7 +55,7 @@
 
             <div class="card-header pb-0">
 
-                <form action="/Search_customers" method="POST" role="search" autocomplete="off">
+                <form action="/Search_product" method="POST" role="search" autocomplete="off">
                     {{ csrf_field() }}
 
 

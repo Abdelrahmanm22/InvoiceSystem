@@ -43,13 +43,13 @@ Route::get('/invoices', [InvoiceController::class,'index'])->name('invoices');
 Route::get('/Invoice_Paid', [InvoiceController::class,'Invoice_Paid'])->name('Invoice_Paid');
 Route::get('/Invoice_unPaid', [InvoiceController::class,'Invoice_unPaid'])->name('Invoice_unPaid');
 Route::get('/Invoice_Partial', [InvoiceController::class,'Invoice_Partial'])->name('Invoice_Partial');
-Route::get('/addInvoices', [InvoiceController::class,'create'])->name('invoices.add');
-Route::post('/postaddInvoices',[InvoiceController::class,'store'])->name('invoices.postadd');
-Route::get('/updateInvoice/{id}', [InvoiceController::class,'edit'])->name('invoices.update');
+// Route::get('/addInvoices', [InvoiceController::class,'create'])->name('invoices.add');
+// Route::post('/postaddInvoices',[InvoiceController::class,'store'])->name('invoices.postadd');
+// Route::get('/updateInvoice/{id}', [InvoiceController::class,'edit'])->name('invoices.update');
 Route::get('/changepayment/{id}', [InvoiceController::class,'changePayment'])->name('invoices.change.payment');
 Route::get('/printInvoice/{id}', [InvoiceController::class,'printInvoice'])->name('invoices.printing');
 Route::post('/postchangepayment', [InvoiceController::class,'postChangePayment'])->name('invoices.post.change.payment');
-Route::post('/postupdateInvoices',[InvoiceController::class,'update'])->name('invoices.postupdate');
+// Route::post('/postupdateInvoices',[InvoiceController::class,'update'])->name('invoices.postupdate');
 Route::post('/deleteInvoice',[InvoiceController::class,'destroy'])->name('invoices.delete');
 Route::post('/archiveInvoice',[InvoiceController::class,'archive'])->name('invoices.archive');
 Route::get('/export', [InvoiceController::class, 'export'])->name('export');
@@ -72,10 +72,10 @@ Route::get('/InvoicesDetails/{id}', [InvoiceDetailsController::class,'index'])->
 
 
 ////Routes for invoicesAttachment/////////////////
-Route::get('/showAttach/{invoice_number}/{file_name}', [InvoiceAttachmentsController::class,'index'])->name('showAttach');
-Route::get('/download/{invoice_number}/{file_name}', [InvoiceAttachmentsController::class,'download'])->name('showAttach');
-Route::post('/deleteAttach', [InvoiceAttachmentsController::class,'destroy'])->name('deleteAttach');
-Route::post('/addAttach', [InvoiceAttachmentsController::class,'store'])->name('addAttach');
+// Route::get('/showAttach/{invoice_number}/{file_name}', [InvoiceAttachmentsController::class,'index'])->name('showAttach');
+// Route::get('/download/{invoice_number}/{file_name}', [InvoiceAttachmentsController::class,'download'])->name('showAttach');
+// Route::post('/deleteAttach', [InvoiceAttachmentsController::class,'destroy'])->name('deleteAttach');
+// Route::post('/addAttach', [InvoiceAttachmentsController::class,'store'])->name('addAttach');
 ////Routes for invoicesAttachment/////////////////
 
 
@@ -100,10 +100,9 @@ Route::post('/productsDestroy', [ProductController::class,'destroy'])->name('pro
 Route::group(['middleware' => ['auth']], function() {
     Route::resource('roles', RoleController::class);
     Route::resource('users', UserController::class);
-    
 });
 ////Routes for Spatie Permission////////////////
-Route::get('/editProfile', [UserController::class,'profile'])->name('editProfile');
+// Route::get('/editProfile', [UserController::class,'profile'])->name('editProfile');
 
 
 ////Routes for Reports ////////////////
@@ -111,7 +110,7 @@ Route::get('/invoicesReport', [InvoicesReportController::class,'index'])->name('
 Route::post('/Search_invoices', [InvoicesReportController::class,'Search_invoices'])->name('Search_invoices');
 
 Route::get('/productsReport', [ProductReportController::class,'index'])->name('customersReport');
-Route::post('/Search_customers', [ProductReportController::class,'Search_product'])->name('Search_customers');
+Route::post('/Search_product', [ProductReportController::class,'Search_product'])->name('Search_product');
 ////Routes for Reports ////////////////
 
 
